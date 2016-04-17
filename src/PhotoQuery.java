@@ -1,4 +1,4 @@
 
-public class PhotoQuery {
+public class PhotoQuery extends Query{
 
 }

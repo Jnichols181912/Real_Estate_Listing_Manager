@@ -8,11 +8,16 @@ public class Listing {
 	 private String dateAdded;
 	 private int bedrooms;
 	 private int bathrooms;
-	 private Address address;
-	 private Category category;
-	 private Status status;
-	 private Type type;
 	 
+	 public Listing() {
+		 this.id = null;
+		 this.price = 0;
+		 this.URL = null;
+		 this.description = null;
+		 this.dateAdded = null;
+		 this.bedrooms = 0;
+		 this.bathrooms = 0;
+	 }
 	 
 	 public Listing(String id, int price, String URL, String description, String dateAdded, int bedrooms, int bathrooms){
 		 this.id = new String(id);

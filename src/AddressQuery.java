@@ -1,9 +1,14 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class AddressQuery extends Query{
 	
+	protected List<Address> tableOutput;
+	
 		public AddressQuery() {
 			super();
+			this.tableOutput = new ArrayList<Address>();
 		}
 
 		public void getCountries() {
@@ -11,11 +16,11 @@ public class AddressQuery extends Query{
 		        Connection con = DriverManager.getConnection(this.server,"app","app");  
 		        Statement stmt = con.createStatement();
 		        ResultSet rs = stmt.executeQuery("SELECT a.Country FROM ADDRESS a GROUP BY a.Country");
-		        
-		        int i = 0;
+
 		        while (rs.next()) {
-		        	this.tableOutput.add(rs.getArray(i));
-		        	i++;
+		        	Address newAddress = new Address();
+		        	newAddress.setCountry(rs.getString("Country"));
+		        	this.tableOutput.add(newAddress);
 		        }
 		      } catch(SQLException e) {
 		        System.out.println("SQL exception occured" + e.toString() );
@@ -29,10 +34,10 @@ public class AddressQuery extends Query{
 		        ResultSet rs = stmt.executeQuery("SELECT a.State FROM ADDRESS a where a.Country = "
 		        								 + "\"United States\" GROUP BY a.State");
 		        
-		        int i = 0;
 		        while (rs.next()) {
-		        	this.tableOutput.add(rs.getArray(i));
-		        	i++;
+		        	Address newAddress = new Address();
+		        	newAddress.setCountry(rs.getString("State"));
+		        	this.tableOutput.add(newAddress);
 		        }
 		      } catch(SQLException e) {
 		        System.out.println("SQL exception occured" + e.toString() );
@@ -52,11 +57,11 @@ public class AddressQuery extends Query{
 		        	rs = stmt.executeQuery("SELECT a.City FROM ADDRESS a where a.Country = \""
 		        									 +  address.getCountry() + "\" GROUP BY a.City");
 		        }
-		        
-		        int i = 0;
+
 		        while (rs.next()) {
-		        	this.tableOutput.add(rs.getArray(i));
-		        	i++;
+		        	Address newAddress = new Address();
+		        	newAddress.setCountry(rs.getString("City"));
+		        	this.tableOutput.add(newAddress);
 		        }
 		      } catch(SQLException e) {
 		        System.out.println("SQL exception occured" + e.toString() );
@@ -84,11 +89,11 @@ public class AddressQuery extends Query{
 		        	rs = stmt.executeQuery("SELECT a.PostalCode FROM ADDRESS a where a.Country = \""
 	   			   			   			   + address.getCountry() + "\" GROUP BY a.PostalCode");
 		        }
-		        
-		        int i = 0;
+
 		        while (rs.next()) {
-		        	this.tableOutput.add(rs.getArray(i));
-		        	i++;
+		        	Address newAddress = new Address();
+		        	newAddress.setCountry(rs.getString("PostalCode"));
+		        	this.tableOutput.add(newAddress);
 		        }
 		      } catch(SQLException e) {
 		        System.out.println("SQL exception occured" + e.toString() );
@@ -119,15 +124,20 @@ public class AddressQuery extends Query{
 		        	rs = stmt.executeQuery("SELECT a.Address FROM ADDRESS a where a.Country = \""
 				   			   			   + address.getCountry() + "\" GROUP BY a.Address");
 		        }
-		        
-		        int i = 0;
+
 		        while (rs.next()) {
-		        	this.tableOutput.add(rs.getArray(i));
-		        	i++;
+		        	Address newAddress = new Address();
+		        	newAddress.setCountry(rs.getString("Address"));
+		        	this.tableOutput.add(newAddress);
 		        }
 		      } catch(SQLException e) {
 		        System.out.println("SQL exception occured" + e.toString() );
 		      }
 			//(select a.fullstreetaddress from address a group by a.fullstreetaddress)
+		}
+		
+		public List<Address> getTableOutput() {
+			List<Address> tableOutput = this.tableOutput;
+			return tableOutput;
 		}
 }
