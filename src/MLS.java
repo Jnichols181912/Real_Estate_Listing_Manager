@@ -8,6 +8,15 @@ public class MLS {
 	private String phoneNumber;
 	private String fax;
 	
+	public MLS() {
+		this.name = null;
+		this.agent = null;
+		this.address = null;
+		this.email = null;
+		this.phoneNumber = null;
+		this.fax = null;
+	}
+	
 	public MLS(String name, String agent, String address, String email, String phoneNumber, String fax) {
 		this.name = new String(name);
 		this.agent = new String(agent);
