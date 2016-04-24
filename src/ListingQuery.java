@@ -1,4 +1,4 @@
 
-public class ListingQuery {
+public class ListingQuery extends Query{
 
 }

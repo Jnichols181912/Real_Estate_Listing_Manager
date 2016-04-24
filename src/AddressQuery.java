@@ -8,11 +8,13 @@ public class AddressQuery extends Query{
 	protected List<Address> tableOutput;
 	
 		public AddressQuery() {
+			
 			super();
 			this.tableOutput = new ArrayList<Address>();
 		}
 
 		public void getCountries() {
+			
 			Connection con = null;
 			
 			try {
@@ -29,17 +31,18 @@ public class AddressQuery extends Query{
 		        rs.close();
 			} catch(SQLException e) {
 		        e.printStackTrace();;
-		      } finally {
-		    	  try {
-		    		  if (con != null)
-		    			  con.close();
-		    	  } catch (SQLException e) {
-		    			  e.printStackTrace();
-		    	  }
-		      }
+		    } finally {
+		    	try {
+		    		if (con != null)
+		    		con.close();
+		    	} catch (SQLException e) {
+		    		e.printStackTrace();
+		    	}
+		    }
 		}
 		
 		public void getStates() {
+			
 			Connection con = null;
 			
 			try {
@@ -57,17 +60,18 @@ public class AddressQuery extends Query{
 		        rs.close();
 			} catch(SQLException e) {
 		        e.printStackTrace();;
-		      } finally {
-		    	  try {
-		    		  if (con != null)
-		    			  con.close();
-		    	  } catch (SQLException e) {
-		    			  e.printStackTrace();
-		    	  }
-		      }
+		    } finally {
+		    	try {
+		    		if (con != null)
+		    		con.close();
+		    	} catch (SQLException e) {
+		    		e.printStackTrace();
+		    	}
+		    }
 		}
 
 		public void getCities(Address address) {
+			
 			Connection con = null;
 			
 			try {
@@ -92,17 +96,18 @@ public class AddressQuery extends Query{
 		        rs.close();
 			} catch(SQLException e) {
 		        e.printStackTrace();;
-		      } finally {
-		    	  try {
-		    		  if (con != null)
-		    			  con.close();
-		    	  } catch (SQLException e) {
-		    			  e.printStackTrace();
-		    	  }
-		      }
+		    } finally {
+		    	try {
+		    		if (con != null)
+		    		con.close();
+		    	} catch (SQLException e) {
+		    		e.printStackTrace();
+		    	}
+		    }
 		}
 		
 		public void getPostalCode(Address address) {
+			
 			Connection con = null;
 			
 			try {
@@ -135,17 +140,18 @@ public class AddressQuery extends Query{
 		        rs.close();
 			} catch(SQLException e) {
 		        e.printStackTrace();;
-		      } finally {
-		    	  try {
-		    		  if (con != null)
-		    			  con.close();
-		    	  } catch (SQLException e) {
-		    			  e.printStackTrace();
-		    	  }
-		      }
+		    } finally {
+		    	try {
+		    		if (con != null)
+		    		con.close();
+		    	} catch (SQLException e) {
+		    		e.printStackTrace();
+		    	}
+		    }
 		}
 		
 		public void getAddresses(Address address) {
+			
 			Connection con = null;
 			
 			try {
@@ -181,17 +187,18 @@ public class AddressQuery extends Query{
 		        rs.close();
 			} catch(SQLException e) {
 		        e.printStackTrace();;
-		      } finally {
-		    	  try {
-		    		  if (con != null)
-		    			  con.close();
-		    	  } catch (SQLException e) {
-		    			  e.printStackTrace();
-		    	  }
-		      }
+		    } finally {
+		    	try {
+		    		if (con != null)
+		    		con.close();
+		    	} catch (SQLException e) {
+		    		e.printStackTrace();
+		    	}
+		    }
 		}
 		
 		public List<Address> getTableOutput() {
+			
 			List<Address> tableOutput = this.tableOutput;
 			return tableOutput;
 		}

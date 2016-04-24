@@ -9,6 +9,6 @@ public class Query {
 	
 	public Query() {
 		this.tableOutput = new ArrayList<Object>();
-		this.server = "jdbc:derby://localhost:1527/junkdb;create=false";
+		this.server = "jdbc:derby://localhost:5555/RealEstateDb;create=false";
 	}
 }

@@ -7,13 +7,18 @@ public class CategoryQuery extends Query{
 	protected List<Category> tableOutput;
 	
 	public CategoryQuery() {
+		
 		super();
 		this.tableOutput = new ArrayList<Category>();
 	}
 	
 	public void getCountries() {
-	    try {
-	        Connection con = DriverManager.getConnection(this.server,"app","app");  
+		
+		Connection con = null;
+		
+		try {
+			Driver d = new ClientDriver();
+	        con = d.connect(server, null);  
 	        Statement stmt = con.createStatement();
 	        ResultSet rs = stmt.executeQuery("SELECT c.CategoryName FROM CATEGORY c GROUP BY c.CategoryName");
 
@@ -22,11 +27,19 @@ public class CategoryQuery extends Query{
 	        	this.tableOutput.add(newCategory);
 	        }
 	      } catch(SQLException e) {
-	        System.out.println("SQL exception occured" + e.toString() );
-	      }
+		        e.printStackTrace();;
+		  } finally {
+			  try {
+				  if (con != null)
+			      con.close();
+			  } catch (SQLException e) {
+				  e.printStackTrace();  
+		      }
+		  }
 	}
 	
 	public List<Category> getTableOutput() {
+		
 		List<Category> tableOutput = this.tableOutput;
 		return tableOutput;
 	}

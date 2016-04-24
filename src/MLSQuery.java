@@ -1,4 +1,4 @@
 
-public class MLSQuery {
+public class MLSQuery extends Query{
 
 }
