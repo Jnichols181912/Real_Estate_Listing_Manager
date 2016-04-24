@@ -34,51 +34,51 @@ public class Menu
                     break;
             case 2: // Step 2 for case 2 build and execute the query to find the
                     // name and major of all students for a given
-                    //MajorGradYearQuery(conn);
+                    InputStateQuery(conn);
                     break;
             case 3: // Step 2 for case 1 -- build and execute the student major
                     // query
-                    //StudentMajorQuery(conn);
+                    InputCityQuery(conn);
                     break;
             case 4: // Step 2 for case 2 build and execute the query to find the
                     // name and major of all students for a given
-                    //MajorGradYearQuery(conn);
+                    InputPostalCodeQuery(conn);
                     break;
             case 5: // Step 2 for case 1 -- build and execute the student major
                     // query
-                    //StudentMajorQuery(conn);
+                    //InputAddressQuery(conn);
                     break;
             case 6: // Step 2 for case 2 build and execute the query to find the
                     // name and major of all students for a given
-                    //MajorGradYearQuery(conn);
+                    //InputCategoryQuery(conn);
                     break;
             case 7: // Step 2 for case 1 -- build and execute the student major
                     // query
-                    //StudentMajorQuery(conn);
+                    //InputTypeQuery(conn);
                     break;
             case 8: // Step 2 for case 2 build and execute the query to find the
                     // name and major of all students for a given
-                    //MajorGradYearQuery(conn);
+                    //InputNumberOfBedroomsQuery(conn);
                     break;
             case 9: // Step 2 for case 2 build and execute the query to find the
                     // name and major of all students for a given
-                    //MajorGradYearQuery(conn);
+                    //InputNumberOfBathroomsQuery(conn);
                     break;
             case 10: // Step 2 for case 1 -- build and execute the student major
                     // query
-                    //StudentMajorQuery(conn);
+                    //InputPriceQuery(conn);
                     break;
             case 11: // Step 2 for case 2 build and execute the query to find the
                     // name and major of all students for a given
-                    //MajorGradYearQuery(conn);
+                    //InputDateQuery(conn);
                     break;
             case 12: // Step 2 for case 1 -- build and execute the student major
                     // query
-                    //StudentMajorQuery(conn);
+                    //InputCompanyQuery(conn);
                     break;
             case 13: // Step 2 for case 2 build and execute the query to find the
                     // name and major of all students for a given
-                    //MajorGradYearQuery(conn);
+                    //InputListingNumberQuery(conn);
                     break;
             default: System.out.println("Illegal choice");
                      break;
@@ -108,27 +108,27 @@ public class Menu
       Scanner keyboard = new Scanner(System.in);
       int response;
 
-      System.out.println("Choose from one of the following options:
-                         + \t1:  Search listing by country
-                         + \t2:  Search listing by state
-                         + \t3:  Search listing by city
-                         + \t4:  Search listing by postal code
-                         + \t5:  Search listing by address
-                         + \t6:  Search listing by category
-                         + \t7:  Search listing by type
-                         + \t8:  Search listing by number of bedrooms
-                         + \t9:  Search listing by number of bathrooms
-                         + \t10: Search listing by price
-                         + \t11: Search listing by date
-                         + \t12: Search listing by MLS company
-                         + \t13: Search listing by listing number");
+      System.out.println("Choose from one of the following options:"
+                         + "\t1:  Search listing by country"
+                         + "\t2:  Search listing by state"
+                         + "\t3:  Search listing by city"
+                         + "\t4:  Search listing by postal code"
+                         + "\t5:  Search listing by address"
+                         + "\t6:  Search listing by category"
+                         + "\t7:  Search listing by type"
+                         + "\t8:  Search listing by number of bedrooms"
+                         + "\t9:  Search listing by number of bathrooms"
+                         + "\t10: Search listing by price"
+                         + "\t11: Search listing by date"
+                         + "\t12: Search listing by MLS company"
+                         + "\t13: Search listing by listing number");
       System.out.print("Your choice ==> ");
       response = keyboard.nextInt();
       System.out.println( );
       return response;
    }
 
-      // This method is for the query for all students with their majors.
+   // This method is for the query for all listings in a particular country.
    public static void InputCountryQuery(Connection conn) throws SQLException
    {
       Statement stmt = conn.createStatement();
@@ -137,6 +137,8 @@ public class Menu
       Scanner scannerObject = new Scanner(System.in);
       System.out.print("Enter a country: ");
       country = scannerObject.nextLine( );
+      
+      country = country.toUpperCase();
 
       String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.StateOrProvince, a.City, a.FullStreetAddress "
                    + "from MLS m, LISTING l, ADDRESS a "
@@ -145,54 +147,188 @@ public class Menu
                    + "and l.MlsId = m.MlsId";
       ResultSet rs = stmt.executeQuery(qry);
 
-      // Step 3: loop through the result set
-      System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tState" + "\tCity" + "\tAddress");
-      while (rs.next())
-      {
-         String mlsId = rs.getString("MlsId");
-         String mlsName = rs.getString("MlsName");
-         int price = rs.getInt("ListPrice");
-         String state = rs.getString("StateOrProvince");
-         String city = rs.getString("City");
-         String address = rs.getString("FullStreetAddress");
-         System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + state + "\t" + city + "\t" + address);
-      }
-      System.out.println( );
-      rs.close();
-   }
-
-   // This method is for the query of names of majors graduating in a particular
-   // year.
-   public static void MajorGradYearQuery(Connection conn) throws SQLException
-   {
-      Scanner keyboard = new Scanner(System.in);
-      System.out.println("The majors are; compsci, drama, and math");
-      System.out.print("Enter the major of students you wish to inquire about: ");
-
-      String major = keyboard.nextLine();
-      major = "'" + major + "'";
-
-      System.out.print("Enter the graduation year of those students: ");
-      String year = keyboard.next();
+      // If nothing is returned then say so. Otherwise display table results
+      if (!rs.isBeforeFirst() ) {    
+    	  System.out.println("No listings exist for this country."); 
+      } else {
       
+    	  // Loop through the result set
+    	  System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tState" + "\tCity" + "\tAddress");
+    	  while (rs.next())
+    	  {
+    		  String mlsId = rs.getString("MlsId");
+    		  String mlsName = rs.getString("MlsName");
+    		  int price = rs.getInt("ListPrice");
+    		  String state = rs.getString("StateOrProvince");
+    		  String city = rs.getString("City");
+    		  String address = rs.getString("FullStreetAddress");
+    		  System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + state + "\t" + city + "\t" + address);
+    	  }
+    	  System.out.println( );
+    	  rs.close();
+      }
+   }
+   
+   // This method is for the query for all listings in a particular state or province.
+   public static void InputStateQuery(Connection conn) throws SQLException
+   {
       Statement stmt = conn.createStatement();
 
-      String qry = "select SName, DName "
-                   + "from DEPT, STUDENT "
-                   + "where MajorId = DId"
-                   + " and  DName = " + major
-                   + "and GradYear = " + year;
+      String state;
+      Scanner scannerObject = new Scanner(System.in);
+      System.out.print("Enter a state or province: ");
+      state = scannerObject.nextLine( );
+      
+      state = state.toUpperCase();
+
+      String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.City, a.FullStreetAddress "
+                   + "from MLS m, LISTING l, ADDRESS a "
+                   + "where a.StateOrProvince = " + state + " "
+                   + "and l.AddressId = a.AddressId "
+                   + "and l.MlsId = m.MlsId";
       ResultSet rs = stmt.executeQuery(qry);
 
-      // Step 3: loop through the result set
-      System.out.println("Name\tMajor");
-      while (rs.next())
-      {
-         String sname = rs.getString("SName");
-         String dname = rs.getString("DName");
-         System.out.println(sname + "\t" + dname);
+      // If nothing is returned then say so. Otherwise display table results
+      if (!rs.isBeforeFirst() ) {    
+    	  System.out.println("No listings exist for this state or province."); 
+      } else {
+      
+    	  // Loop through the result set
+    	  System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tCity" + "\tAddress");
+    	  while (rs.next())
+    	  {
+    		  String mlsId = rs.getString("MlsId");
+    		  String mlsName = rs.getString("MlsName");
+    		  int price = rs.getInt("ListPrice");
+    		  String country = rs.getString("Country");
+    		  String city = rs.getString("City");
+    		  String address = rs.getString("FullStreetAddress");
+    		  System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + city + "\t" + address);
+    	  }
+    	  System.out.println( );
+    	  rs.close();
       }
-      System.out.println( );
-      rs.close();
+   }
+   
+   // This method is for the query for all listings in a particular city.
+   public static void InputCityQuery(Connection conn) throws SQLException
+   {
+      Statement stmt = conn.createStatement();
+
+      String city;
+      Scanner scannerObject = new Scanner(System.in);
+      System.out.print("Enter a city: ");
+      city = scannerObject.nextLine( );
+      
+      city = city.toUpperCase();
+
+      String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.State, a.FullStreetAddress "
+                   + "from MLS m, LISTING l, ADDRESS a "
+                   + "where a.City = " + city + " "
+                   + "and l.AddressId = a.AddressId "
+                   + "and l.MlsId = m.MlsId";
+      ResultSet rs = stmt.executeQuery(qry);
+
+      // If nothing is returned then say so. Otherwise display table results
+      if (!rs.isBeforeFirst() ) {    
+    	  System.out.println("No listings exist for this city."); 
+      } else {
+      
+    	  // Loop through the result set
+    	  System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tAddress");
+    	  while (rs.next())
+    	  {
+    		  String mlsId = rs.getString("MlsId");
+    		  String mlsName = rs.getString("MlsName");
+    		  int price = rs.getInt("ListPrice");
+    		  String country = rs.getString("Country");
+    		  String state = rs.getString("State");
+    		  String address = rs.getString("FullStreetAddress");
+    		  System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + address);
+    	  }
+    	  System.out.println( );
+    	  rs.close();
+      }
+   }
+
+   // This method is for the query for all listings in a particular postal code.
+   public static void InputPostalCodeQuery(Connection conn) throws SQLException
+   {
+      Statement stmt = conn.createStatement();
+
+      int postalCode;
+      Scanner scannerObject = new Scanner(System.in);
+      System.out.print("Enter a postal code: ");
+      postalCode = scannerObject.nextInt( );
+
+      String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress "
+                   + "from MLS m, LISTING l, ADDRESS a "
+                   + "where a.PostalCode = " + postalCode + " "
+                   + "and l.AddressId = a.AddressId "
+                   + "and l.MlsId = m.MlsId";
+      ResultSet rs = stmt.executeQuery(qry);
+
+      // If nothing is returned then say so. Otherwise display table results
+      if (!rs.isBeforeFirst() ) {    
+    	  System.out.println("No listings exist for this postal code."); 
+      } else {
+      
+    	  // Loop through the result set
+    	  System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
+    	  while (rs.next())
+    	  {
+    		  String mlsId = rs.getString("MlsId");
+    		  String mlsName = rs.getString("MlsName");
+    		  int price = rs.getInt("ListPrice");
+    		  String country = rs.getString("Country");
+    		  String state = rs.getString("StateOrProvince");
+    		  String city = rs.getString("City");
+    		  String address = rs.getString("FullStreetAddress");
+    		  System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
+    	  }
+    	  System.out.println( );
+    	  rs.close();
+      }
+   }
+   
+   // This method is for the query for all listings in a particular address.
+   public static void InputAddressQuery(Connection conn) throws SQLException
+   {
+      Statement stmt = conn.createStatement();
+
+      String address;
+      Scanner scannerObject = new Scanner(System.in);
+      System.out.print("Enter an address: ");
+      address = scannerObject.nextLine( );
+      
+      address = address.toUpperCase();
+
+      String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City,"
+                   + "from MLS m, LISTING l, ADDRESS a "
+                   + "where a.PostalCode = " + address + " "
+                   + "and l.AddressId = a.AddressId "
+                   + "and l.MlsId = m.MlsId";
+      ResultSet rs = stmt.executeQuery(qry);
+
+      // If nothing is returned then say so. Otherwise display table results
+      if (!rs.isBeforeFirst() ) {    
+    	  System.out.println("No listings exist for this adderss."); 
+      } else {
+      
+    	  // Loop through the result set
+    	  System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity");
+    	  while (rs.next())
+    	  {
+    		  String mlsId = rs.getString("MlsId");
+    		  String mlsName = rs.getString("MlsName");
+    		  int price = rs.getInt("ListPrice");
+    		  String country = rs.getString("Country");
+    		  String state = rs.getString("StateOrProvince");
+    		  String city = rs.getString("City");
+    		  System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city);
+    	  }
+    	  System.out.println( );
+    	  rs.close();
+      }
    }
 }
