@@ -1,18 +1,26 @@
 
 public class Address {
-	//test2
+	
 	private String address;
 	private String city;
 	private String state;
 	private String country;
-	private int postalCode;
+	private String postalCode;
 	
-	public Address(String address, String city, String state, String country, int postalCode){
+	public Address() {
+		this.address = null;
+		this.city = null;
+		this.state = null;
+		this.country = null;
+		this.postalCode = null;
+	}
+	
+	public Address(String address, String city, String state, String country, String postalCode){
 		this.address = new String(address);
 		this.city = new String(city);
 		this.state = new String(state);
 		this.country = new String(country);
-		this.postalCode = new Integer(postalCode);
+		this.postalCode = new String(postalCode);
 	}
 	
 	public Address(Address address) {
@@ -21,6 +29,26 @@ public class Address {
 		this.state = address.state;
 		this.country = address.country;
 		this.postalCode = address.postalCode;
+	}
+	
+	public void setAddress(String address){
+		this.address = address;
+	}
+	
+	public void setCity(String city){
+		this.city = city;
+	}
+	
+	public void setState(String state){
+		this.state = state;
+	}
+	
+	public void setCountry(String country){
+		this.country = country;
+	}
+	
+	public void setPostalCode(String postalCode){
+		this.postalCode = postalCode;
 	}
 	
 	public String getAddress() {
@@ -43,9 +71,59 @@ public class Address {
 		return country;
 	}
 	
-	public int getPostalCode() {
-		int postalCode = this.postalCode;
+	public String getPostalCode() {
+		String postalCode = this.postalCode;
 		return postalCode;
+	}
+	
+	public boolean addressExists() {
+		boolean output = false;
+		
+		if (this.address != null) {
+			output = true;
+		}
+		
+		return output;
+	}
+	
+	public boolean cityExists() {
+		boolean output = false;
+		
+		if (this.city != null) {
+			output = true;
+		}
+		
+		return output;
+	}
+	
+	public boolean stateExists() {
+		boolean output = false;
+		
+		if (this.state != null) {
+			output = true;
+		}
+		
+		return output;
+	}
+	
+	public boolean countryExists() {
+		boolean output = false;
+		
+		if (this.country != null) {
+			output = true;
+		}
+		
+		return output;
+	}
+	
+	public boolean postalCodeExists() {
+		boolean output = false;
+		
+		if (this.postalCode != null) {
+			output = true;
+		}
+		
+		return output;
 	}
 	
 	public String toString() {

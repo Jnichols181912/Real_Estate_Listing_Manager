@@ -4,12 +4,11 @@ import java.sql.*;
 
 public class Query {
 
-	protected List<Array> tableOutput;
+	protected List<Object> tableOutput;
 	protected String server;
 	
 	public Query() {
-		this.tableOutput = new ArrayList<Array>();
-		this.server = "jdbc:derby://localhost:1527/junkdb;create=true";
+		this.tableOutput = new ArrayList<Object>();
+		this.server = "jdbc:derby://localhost:1527/junkdb;create=false";
 	}
-
 }

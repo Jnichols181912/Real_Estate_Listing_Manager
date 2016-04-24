@@ -1,6 +1,7 @@
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.derby.jdbc.ClientDriver;
 
 public class AddressQuery extends Query{
 	
@@ -12,8 +13,11 @@ public class AddressQuery extends Query{
 		}
 
 		public void getCountries() {
-		    try {
-		        Connection con = DriverManager.getConnection(this.server,"app","app");  
+			Connection con = null;
+			
+			try {
+				Driver d = new ClientDriver();
+		        con = d.connect(server, null);  
 		        Statement stmt = con.createStatement();
 		        ResultSet rs = stmt.executeQuery("SELECT a.Country FROM ADDRESS a GROUP BY a.Country");
 
@@ -22,32 +26,54 @@ public class AddressQuery extends Query{
 		        	newAddress.setCountry(rs.getString("Country"));
 		        	this.tableOutput.add(newAddress);
 		        }
-		      } catch(SQLException e) {
-		        System.out.println("SQL exception occured" + e.toString() );
+		        rs.close();
+			} catch(SQLException e) {
+		        e.printStackTrace();;
+		      } finally {
+		    	  try {
+		    		  if (con != null)
+		    			  con.close();
+		    	  } catch (SQLException e) {
+		    			  e.printStackTrace();
+		    	  }
 		      }
 		}
 		
 		public void getStates() {
+			Connection con = null;
+			
 			try {
-				Connection con = DriverManager.getConnection(this.server,"app","app");    
+				Driver d = new ClientDriver();
+		        con = d.connect(server, null);  
 		        Statement stmt = con.createStatement();
 		        ResultSet rs = stmt.executeQuery("SELECT a.State FROM ADDRESS a where a.Country = "
-		        								 + "\"United States\" GROUP BY a.State");
+		        								 + "`United States` GROUP BY a.State");
 		        
 		        while (rs.next()) {
 		        	Address newAddress = new Address();
 		        	newAddress.setCountry(rs.getString("State"));
 		        	this.tableOutput.add(newAddress);
 		        }
-		      } catch(SQLException e) {
-		        System.out.println("SQL exception occured" + e.toString() );
+		        rs.close();
+			} catch(SQLException e) {
+		        e.printStackTrace();;
+		      } finally {
+		    	  try {
+		    		  if (con != null)
+		    			  con.close();
+		    	  } catch (SQLException e) {
+		    			  e.printStackTrace();
+		    	  }
 		      }
 		}
 
 		public void getCities(Address address) {
+			Connection con = null;
+			
 			try {
-				Connection con = DriverManager.getConnection(this.server,"app","app");    
-		        Statement stmt = con.createStatement();
+				Driver d = new ClientDriver();
+		        con = d.connect(server, null);  
+		        Statement stmt = con.createStatement();;
 		        ResultSet rs = null;
 		        
 		        if (address.stateExists()) {
@@ -63,14 +89,25 @@ public class AddressQuery extends Query{
 		        	newAddress.setCountry(rs.getString("City"));
 		        	this.tableOutput.add(newAddress);
 		        }
-		      } catch(SQLException e) {
-		        System.out.println("SQL exception occured" + e.toString() );
+		        rs.close();
+			} catch(SQLException e) {
+		        e.printStackTrace();;
+		      } finally {
+		    	  try {
+		    		  if (con != null)
+		    			  con.close();
+		    	  } catch (SQLException e) {
+		    			  e.printStackTrace();
+		    	  }
 		      }
 		}
 		
 		public void getPostalCode(Address address) {
+			Connection con = null;
+			
 			try {
-				Connection con = DriverManager.getConnection(this.server,"app","app");    
+				Driver d = new ClientDriver();
+		        con = d.connect(server, null);  
 		        Statement stmt = con.createStatement();
 		        ResultSet rs = null;
 		        
@@ -95,14 +132,25 @@ public class AddressQuery extends Query{
 		        	newAddress.setCountry(rs.getString("PostalCode"));
 		        	this.tableOutput.add(newAddress);
 		        }
-		      } catch(SQLException e) {
-		        System.out.println("SQL exception occured" + e.toString() );
+		        rs.close();
+			} catch(SQLException e) {
+		        e.printStackTrace();;
+		      } finally {
+		    	  try {
+		    		  if (con != null)
+		    			  con.close();
+		    	  } catch (SQLException e) {
+		    			  e.printStackTrace();
+		    	  }
 		      }
 		}
 		
 		public void getAddresses(Address address) {
+			Connection con = null;
+			
 			try {
-				Connection con = DriverManager.getConnection(this.server,"app","app");    
+				Driver d = new ClientDriver();
+		        con = d.connect(server, null);  
 		        Statement stmt = con.createStatement();
 		        ResultSet rs = null;
 		        
@@ -130,10 +178,17 @@ public class AddressQuery extends Query{
 		        	newAddress.setCountry(rs.getString("Address"));
 		        	this.tableOutput.add(newAddress);
 		        }
-		      } catch(SQLException e) {
-		        System.out.println("SQL exception occured" + e.toString() );
+		        rs.close();
+			} catch(SQLException e) {
+		        e.printStackTrace();;
+		      } finally {
+		    	  try {
+		    		  if (con != null)
+		    			  con.close();
+		    	  } catch (SQLException e) {
+		    			  e.printStackTrace();
+		    	  }
 		      }
-			//(select a.fullstreetaddress from address a group by a.fullstreetaddress)
 		}
 		
 		public List<Address> getTableOutput() {
