@@ -1,10 +1,15 @@
 
 public class Address {
+<<<<<<< HEAD
 	
+=======
+	//test2
+>>>>>>> origin/master
 	private String address;
 	private String city;
 	private String state;
 	private String country;
+<<<<<<< HEAD
 	private String postalCode;
 	
 	public Address() {
@@ -16,11 +21,20 @@ public class Address {
 	}
 	
 	public Address(String address, String city, String state, String country, String postalCode){
+=======
+	private int postalCode;
+	
+	public Address(String address, String city, String state, String country, int postalCode){
+>>>>>>> origin/master
 		this.address = new String(address);
 		this.city = new String(city);
 		this.state = new String(state);
 		this.country = new String(country);
+<<<<<<< HEAD
 		this.postalCode = new String(postalCode);
+=======
+		this.postalCode = new Integer(postalCode);
+>>>>>>> origin/master
 	}
 	
 	public Address(Address address) {
@@ -31,6 +45,7 @@ public class Address {
 		this.postalCode = address.postalCode;
 	}
 	
+<<<<<<< HEAD
 	public void setAddress(String address){
 		this.address = address;
 	}
@@ -51,6 +66,8 @@ public class Address {
 		this.postalCode = postalCode;
 	}
 	
+=======
+>>>>>>> origin/master
 	public String getAddress() {
 		String address = this.address;
 		return address;
@@ -71,6 +88,7 @@ public class Address {
 		return country;
 	}
 	
+<<<<<<< HEAD
 	public String getPostalCode() {
 		String postalCode = this.postalCode;
 		return postalCode;
@@ -126,6 +144,13 @@ public class Address {
 		return output;
 	}
 	
+=======
+	public int getPostalCode() {
+		int postalCode = this.postalCode;
+		return postalCode;
+	}
+	
+>>>>>>> origin/master
 	public String toString() {
 		
 		String output;
