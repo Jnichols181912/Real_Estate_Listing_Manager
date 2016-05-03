@@ -1,93 +1,103 @@
 import java.sql.*;
+
 import org.apache.derby.jdbc.ClientDriver;
 import java.util.Scanner;
+
+/**
+ * 
+ */
+
+/**
+ * @author allen
+ *
+ */
 
 public class RegularUser extends User{
 	
 	public RegularUser() {
 		super();
 	}
-	
-	public void printMenuAndExicute() {
+
+	@Override
+	void printMenuAndExecute() throws SQLException{
 		
 		Scanner keyboard = new Scanner(System.in);
-		int choice;
-
-		System.out.println("Choose from one of the following options:"
-                           + "\t1:  Search listing by country"
-                           + "\t2:  Search listing by state"
-                           + "\t3:  Search listing by city"
-                           + "\t4:  Search listing by postal code"
-                           + "\t5:  Search listing by address"
-                           + "\t6:  Search listing by category"
-                           + "\t7:  Search listing by type"
-                           + "\t8:  Search listing by number of bedrooms"
-                           + "\t9:  Search listing by number of bathrooms"
-                           + "\t10: Search listing by price"
-                           + "\t11: Search listing by date"
-                           + "\t12: Search listing by MLS company"
-                           + "\t13: Search listing by listing number");
-		System.out.print("Your choice ==> ");
-		choice = keyboard.nextInt();
-		System.out.println( );
+		int choice = 0;
+		boolean validChoice = false;
+		
+		while (!validChoice) {
+			System.out.println("Choose from one of the following options:"
+	                           + "\n\t1:  Search listing by country"
+	                           + "\n\t2:  Search listing by state"
+	                           + "\n\t3:  Search listing by city"
+	                           + "\n\t4:  Search listing by postal code"
+	                           + "\n\t5:  Search listing by address"
+	                           + "\n\t6:  Search listing by category"
+	                           + "\n\t7:  Search listing by type"
+	                           + "\n\t8:  Search listing by number of bedrooms"
+	                           + "\n\t9:  Search listing by number of bathrooms"
+	                           + "\n\t10: Search listing by price"
+	                           + "\n\t11: Search listing by date"
+	                           + "\n\t12: Search listing by MLS company"
+	                           + "\n\t13: Search listing by listing number");
+			System.out.print("Your choice ==> ");
+			
+			try {
+				choice = Integer.parseInt(keyboard.nextLine());
+				if (choice < 1 || choice > 13) throw new NumberFormatException();
+				validChoice = true;
+			} catch (NumberFormatException nfe) {
+				Menu.clearConsole();
+				System.out.println("Your input needs to be an integer in range [1,13]");
+			}
+		}
 		
 		switch (choice) {
-  		case 1: // Step 2 for case 1 -- build and execute the student major
-  				// query
-  				InputCountryQuery();
-  				break;
-  		case 2: // Step 2 for case 2 build and execute the query to find the
-  				// name and major of all students for a given
-  				InputStateQuery();
-  				break;
-  		case 3: // Step 2 for case 1 -- build and execute the student major
-  				// query
-  				InputCityQuery();
-  				break;
-  		case 4: // Step 2 for case 2 build and execute the query to find the
-  				// name and major of all students for a given
-  				InputPostalCodeQuery();
-  				break;
-  		case 5: // Step 2 for case 1 -- build and execute the student major
-  				// query
-  				InputAddressQuery();
-  				break;
-  		case 6: // Step 2 for case 2 build and execute the query to find the
-  				// name and major of all students for a given
-  				InputCategoryQuery();
-  				break;
-  		case 7: // Step 2 for case 1 -- build and execute the student major
-  				// query
-  				InputTypeQuery();
-  				break;
-  		case 8: // Step 2 for case 2 build and execute the query to find the
-  				// name and major of all students for a given
-  				InputNumberOfBedroomsQuery();
-  				break;
-  		case 9: // Step 2 for case 2 build and execute the query to find the
-  				// name and major of all students for a given
-  				InputNumberOfBathroomsQuery();
-  				break;
-  		case 10: // Step 2 for case 1 -- build and execute the student major
-  				// query
-  				InputPriceQuery();
-  				break;
-  		case 11: // Step 2 for case 2 build and execute the query to find the
-  				// name and major of all students for a given
-  				InputDateQuery();
-  				break;
-  		case 12: // Step 2 for case 1 -- build and execute the student major
-  				// query
-  				//InputCompanyQuery();
-  				break;
-  		case 13: // Step 2 for case 2 build and execute the query to find the
-  				// name and major of all students for a given
-  				//InputListingNumberQuery();
-  				break;
-  		default: System.out.println("Illegal choice");
-             	break;
+		
+	  		case 1:  InputCountryQuery();
+	  				 break;
+	  					
+	  		case 2:  InputStateQuery();
+	  				 break;
+	  				
+	  		case 3:  InputCityQuery();
+	  				 break;
+	  				
+	  		case 4:  InputPostalCodeQuery();
+	  				 break;
+	  				
+	  		case 5:  InputAddressQuery();
+	  				 break;
+	  				
+	  		case 6:  InputCategoryQuery();
+	  				 break;
+	  				
+	  		case 7:  InputTypeQuery();
+	  				 break;
+	  				
+	  		case 8:  InputNumberOfBedroomsQuery();
+	  				 break;
+	  				
+	  		case 9:  InputNumberOfBathroomsQuery();
+	  				 break;
+	  				
+	  		case 10: InputPriceQuery();
+	  				 break;
+	  				 
+	  		case 11: InputDateQuery();
+	  				 break;
+	  				
+	  		case 12: //InputCompanyQuery();
+	  				 break;
+	  				
+	  		case 13: //InputListingNumberQuery();
+	  				 break;
+	  					
+	  		default: System.out.println("Error handling ensures that code will never reach here... if somehow this line gets printed our program has some major issues");
+	             	break;
 		}
 	}
+	
 
 	// This method is for the query for all listings in a particular country.
 	public void InputCountryQuery() throws SQLException {
@@ -97,25 +107,22 @@ public class RegularUser extends User{
 		String country;
 	    Scanner scannerObject = new Scanner(System.in);
 	    System.out.print("Enter a country: ");
-	    country = scannerObject.nextLine( );
-	      
-	    country = country.toUpperCase();
+	    country = scannerObject.nextLine().toUpperCase();
 
-	    String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.StateOrProvince, a.City, a.FullStreetAddress "
+	    String qry = "select m.MlsId, m.MlsName, a.StateOrProvince, a.City, a.FullStreetAddress "
 	                 + "from MLS m, LISTING l, ADDRESS a "
 	                 + "where a.Country = " + country + " "
 	                 + "and l.AddressId = a.AddressId "
 	                 + "and l.MlsId = m.MlsId";
+	    
 	    ResultSet rs = stmt.executeQuery(qry);
 
 	    // If nothing is returned then say so. Otherwise display table results
 	    if (!rs.isBeforeFirst() ) {    
 	    	System.out.println("No listings exist for this country."); 
-	    } else {
-	      
-	    	// Loop through the result set
-	    	System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tState" + "\tCity" + "\tAddress");
-	    	
+	    } else { // Loop through the result set
+	    	System.out.format("%4d %30-s %20-s %20-s %50-s", "MlsId", "MlsName", "StateorProvince", "FullStreetAddress");
+	    
 	    	while (rs.next()) {
 	    		String mlsId = rs.getString("MlsId");
 	    		String mlsName = rs.getString("MlsName");
@@ -128,6 +135,7 @@ public class RegularUser extends User{
 	    	System.out.println( );
 	    	rs.close();
 	    }
+	    scannerObject.close();
 	}
 	   
 	// This method is for the query for all listings in a particular state or province.
@@ -663,3 +671,4 @@ public class RegularUser extends User{
    		}
 	}
 }
+
