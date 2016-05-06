@@ -108,7 +108,7 @@ public class RegularUser extends User{
 	    Scanner scannerObject = new Scanner(System.in);
 	    System.out.print("Enter a country: ");
 	    country = scannerObject.nextLine().toUpperCase();
-
+	    country = "'" + country + "'";
 	    String qry = "select m.MlsId, m.MlsName, a.StateOrProvince, a.City, a.FullStreetAddress "
 	                 + "from MLS m, LISTING l, ADDRESS a "
 	                 + "where a.Country = " + country + " "
@@ -118,9 +118,9 @@ public class RegularUser extends User{
 	    ResultSet rs = stmt.executeQuery(qry);
 
 	    // If nothing is returned then say so. Otherwise display table results
-	    if (!rs.isBeforeFirst() ) {    
+	    /*if (!rs.isBeforeFirst()) {    
 	    	System.out.println("No listings exist for this country."); 
-	    } else { // Loop through the result set
+	    } else { // Loop through the result set*/
 	    	System.out.format("%4d %30-s %20-s %20-s %50-s", "MlsId", "MlsName", "StateorProvince", "FullStreetAddress");
 	    
 	    	while (rs.next()) {
@@ -134,7 +134,7 @@ public class RegularUser extends User{
 	    	}
 	    	System.out.println( );
 	    	rs.close();
-	    }
+	    /*}*/
 	    scannerObject.close();
 	}
 	   

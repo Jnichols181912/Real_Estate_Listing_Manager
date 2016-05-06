@@ -33,15 +33,19 @@ public abstract class User {
 			//Driver d = new ClientDriver();
 			
 			Driver d = new EmbeddedDriver();
-			String url = "jdbc:derby://localhost:5555/RealEstateDb;create = true;";
+			String url = "jdbc:derby:/home/allen/Dropbox/EclipseWorkspace/workspace/RealEstateListingManager/RealEstateDb";
+					/*"jdbc:derby://localhost:5555/RealEstateDb;create = true;"*/
 			conn = d.connect(url, null);
-
+			if (conn == null) {
+				System.out.println("\nError establishing connection to DB");
+				throw new SQLException();
+			}
 			// Make a menu selection
 			printMenuAndExecute();
-
 			
 		} catch(SQLException e) {
 			e.printStackTrace();
+			System.exit(-1);
 		} finally {
 			// Step 4: Disconnect from the server
 			try {
@@ -49,6 +53,7 @@ public abstract class User {
 					conn.close();
 			} catch(SQLException e) {
 				e.printStackTrace();
+				System.exit(-1);
 			}
 		}
 	}
