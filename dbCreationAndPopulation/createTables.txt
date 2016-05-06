@@ -59,6 +59,7 @@ create table LISTING (
     ListURL varchar(100) not null,
     ListingDescription varchar(100),
     ListDate VARCHAR(15),
+	 ListPrice int,
     Bedrooms int,
     Bathrooms int,
     TypeId int,
