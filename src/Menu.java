@@ -12,16 +12,16 @@ public class Menu {
 
 	private static final String ANSI_CLS = "\u001b[2J";
 	private static final String ANSI_HOME = "\u001b[H";
+	public static Scanner scanner;
 	
 	/**
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		   
+		scanner = new Scanner(System.in);
 		int choice = 0;
 		boolean done, stopAsking;
 		done = stopAsking = false;
-		Scanner scanner = new Scanner(System.in);
 		
 		clearConsole();
 		

@@ -9,10 +9,8 @@
 
 import java.sql.*;
 
-import org.apache.derby.jdbc.ClientDriver;
+//import org.apache.derby.jdbc.ClientDriver;
 import org.apache.derby.jdbc.EmbeddedDriver;
-
-import java.util.Scanner;
 
 public abstract class User {
 
@@ -24,8 +22,6 @@ public abstract class User {
 	
 	public void run() {
 		
-		int choice;
-		
 		conn = null;
 		
 		try {
@@ -34,12 +30,12 @@ public abstract class User {
 			
 			Driver d = new EmbeddedDriver();
 			String url = "jdbc:derby:/home/allen/Dropbox/EclipseWorkspace/workspace/RealEstateListingManager/RealEstateDb";
-					/*"jdbc:derby://localhost:5555/RealEstateDb;create = true;"*/
 			conn = d.connect(url, null);
 			if (conn == null) {
 				System.out.println("\nError establishing connection to DB");
 				throw new SQLException();
 			}
+			
 			// Make a menu selection
 			printMenuAndExecute();
 			

@@ -1,7 +1,5 @@
 import java.sql.*;
-
-import org.apache.derby.jdbc.ClientDriver;
-import java.util.Scanner;
+//import org.apache.derby.jdbc.ClientDriver;
 
 /**
  * 
@@ -20,8 +18,7 @@ public class RegularUser extends User{
 
 	@Override
 	void printMenuAndExecute() throws SQLException{
-		
-		Scanner keyboard = new Scanner(System.in);
+
 		int choice = 0;
 		boolean validChoice = false;
 		
@@ -41,9 +38,9 @@ public class RegularUser extends User{
 	                           + "\n\t12: Search listing by MLS company"
 	                           + "\n\t13: Search listing by listing number");
 			System.out.print("Your choice ==> ");
-			
+
 			try {
-				choice = Integer.parseInt(keyboard.nextLine());
+				choice = Integer.parseInt(Menu.scanner.nextLine());
 				if (choice < 1 || choice > 13) throw new NumberFormatException();
 				validChoice = true;
 			} catch (NumberFormatException nfe) {
@@ -105,9 +102,8 @@ public class RegularUser extends User{
 		Statement stmt = conn.createStatement();
 
 		String country;
-	    Scanner scannerObject = new Scanner(System.in);
 	    System.out.print("Enter a country: ");
-	    country = scannerObject.nextLine().toUpperCase();
+	    country = Menu.scanner.nextLine().toUpperCase();
 	    country = "'" + country + "'";
 	    String qry = "select m.MlsId, m.MlsName, a.StateOrProvince, a.City, a.FullStreetAddress "
 	                 + "from MLS m, LISTING l, ADDRESS a "
@@ -117,25 +113,17 @@ public class RegularUser extends User{
 	    
 	    ResultSet rs = stmt.executeQuery(qry);
 
-	    // If nothing is returned then say so. Otherwise display table results
-	    /*if (!rs.isBeforeFirst()) {    
-	    	System.out.println("No listings exist for this country."); 
-	    } else { // Loop through the result set*/
-	    	System.out.format("%4d %30-s %20-s %20-s %50-s", "MlsId", "MlsName", "StateorProvince", "FullStreetAddress");
-	    
 	    	while (rs.next()) {
-	    		String mlsId = rs.getString("MlsId");
+	    		int mlsId = rs.getInt("MlsId");
 	    		String mlsName = rs.getString("MlsName");
-	    		int price = rs.getInt("ListPrice");
+	    		//int price = rs.getInt("ListPrice");
 	    		String state = rs.getString("StateOrProvince");
 	    		String city = rs.getString("City");
 	    		String address = rs.getString("FullStreetAddress");
-	    		System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + state + "\t" + city + "\t" + address);
+	    		System.out.println(mlsId + "\t" + mlsName + "\t" + /*price +*/ "\t" + state + "\t" + city + "\t" + address);
 	    	}
 	    	System.out.println( );
 	    	rs.close();
-	    /*}*/
-	    scannerObject.close();
 	}
 	   
 	// This method is for the query for all listings in a particular state or province.
@@ -144,9 +132,8 @@ public class RegularUser extends User{
 		Statement stmt = conn.createStatement();
 
 	    String state;
-	    Scanner scannerObject = new Scanner(System.in);
 	    System.out.print("Enter a state or province: ");
-	    state = scannerObject.nextLine( );
+	    state = Menu.scanner.nextLine( );
 	      
 	    state = state.toUpperCase();
 
@@ -185,9 +172,8 @@ public class RegularUser extends User{
 		Statement stmt = conn.createStatement();
 
 		String city;
-		Scanner scannerObject = new Scanner(System.in);
 		System.out.print("Enter a city: ");
-		city = scannerObject.nextLine( );
+		city = Menu.scanner.nextLine( );
       
 		city = city.toUpperCase();
 
@@ -226,9 +212,8 @@ public class RegularUser extends User{
 		Statement stmt = conn.createStatement();
 
 		int postalCode;
-		Scanner scannerObject = new Scanner(System.in);
 		System.out.print("Enter a postal code: ");
-		postalCode = scannerObject.nextInt( );	
+		postalCode = Menu.scanner.nextInt( );	
 
 		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress "
                    	 + "from MLS m, LISTING l, ADDRESS a "
@@ -266,9 +251,8 @@ public class RegularUser extends User{
    		Statement stmt = conn.createStatement();
 
    		String address;
-   		Scanner scannerObject = new Scanner(System.in);
    		System.out.print("Enter an address: ");
-   		address = scannerObject.nextLine( );
+   		address = Menu.scanner.nextLine( );
       
    		address = address.toUpperCase();
 
@@ -328,9 +312,8 @@ public class RegularUser extends User{
    			categoryName[i] = rs.getString("CategoryName");
    		}
 	   
-   		Scanner scanner = new Scanner(System.in);
    		System.out.print("Please choose a category number: ");
-   		category = scanner.nextInt();
+   		category = Menu.scanner.nextInt();
    		   		
    		return category;
    	}
@@ -399,9 +382,9 @@ public class RegularUser extends User{
    			propertyType[i] = rs.getString("PropertyType");
    		}
 	   
-   		Scanner scanner = new Scanner(System.in);
+
    		System.out.print("Please choose a type number: ");
-   		type = scanner.nextInt();
+   		type = Menu.scanner.nextInt();
    		
    		return type;
    	}
@@ -449,9 +432,9 @@ public class RegularUser extends User{
       
    		Statement stmt = conn.createStatement();
       
-   		Scanner scanner = new Scanner(System.in);
+
    		System.out.print("Please enter the number of bedrooms: ");
-   		int numOfBedrooms = scanner.nextInt();
+   		int numOfBedrooms = Menu.scanner.nextInt();
 
    		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
                      + "from MLS m, LISTING l, ADDRESS a, TYPE t "
@@ -488,9 +471,8 @@ public class RegularUser extends User{
    		
    		Statement stmt = conn.createStatement();
       
-     	Scanner scanner = new Scanner(System.in);
      	System.out.print("Please enter the number of bathrooms: ");
-     	int numOfBathrooms = scanner.nextInt();
+     	int numOfBathrooms = Menu.scanner.nextInt();
 
      	String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
                      + "from MLS m, LISTING l, ADDRESS a, TYPE t "
@@ -528,15 +510,15 @@ public class RegularUser extends User{
    		Statement stmt = conn.createStatement();
    		
    		String qry = null;
-   		Scanner scanner = new Scanner(System.in);
+
    		System.out.print("Please enter the price: ");
-   		int numOfBathrooms = scanner.nextInt();
+   		int numOfBathrooms = Menu.scanner.nextInt();
       
    		System.out.println("Choose one of the following:"
     		  			   + "\t1: Equal to or greater than"
     		  			   + "\t2: Equal to or lower than");
    		System.out.print("Please choose: ");
-   		int choice = scanner.nextInt();
+   		int choice = Menu.scanner.nextInt();
       
    		if (choice == 1) {
    			qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
@@ -583,15 +565,15 @@ public class RegularUser extends User{
    		Statement stmt = conn.createStatement();
    		
    		String qry = null;
-   		Scanner scanner = new Scanner(System.in);
+
    		System.out.print("Please enter the date(yyyy-mm-dd): ");
-   		String date = scanner.nextLine();
+   		String date = Menu.scanner.nextLine();
 	      
    		System.out.println("Choose one of the following:"
 	    		  		   + "\t1: Equal to or greater than"
 	    		  		   + "\t2: Equal to or lower than");
    		System.out.print("Please choose: ");
-   		int choice = scanner.nextInt();
+   		int choice = Menu.scanner.nextInt();
 	      
    		if (choice == 1) {
    			qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
@@ -636,10 +618,9 @@ public class RegularUser extends User{
    	public void InputMlsCompanyQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
-      
-   		Scanner scanner = new Scanner(System.in);
+
    		System.out.print("Please enter the mls company acronym: ");
-   		String mlsCompany = scanner.nextLine();
+   		String mlsCompany = Menu.scanner.nextLine();
 
    		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
                    	 + "from MLS m, LISTING l, ADDRESS a, TYPE t "
