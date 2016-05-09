@@ -81,6 +81,8 @@ public class AdminUser extends User{
 	}
 
    	private static final void printAdminMode() {
-   		System.out.println("---------------------------------Administrator mode---------------------------------");	
+   		System.out.println("-----------------------------------------" 
+   							+ "Administrator mode"
+   							+"-----------------------------------------");	
    	}
 }

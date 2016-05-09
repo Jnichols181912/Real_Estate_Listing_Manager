@@ -130,7 +130,13 @@ public class User {
 	protected void printMenuAndExecute() throws SQLException{}
 	
 	protected final static void printLine() {
-		System.out.println("-----------------------------------------------------------------------------------------------------------------------------------");
+		System.out.println("----------------------"
+							+ "-------------------"
+							+ "-------------------"
+							+ "-------------------"
+							+ "-------------------"
+							+ "-------------------"
+							+ "-------------------");
 	}
 	
 	protected final static void clearConsole() {

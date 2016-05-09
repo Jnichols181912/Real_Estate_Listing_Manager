@@ -106,7 +106,9 @@ public class RegularUser extends User{
 
 		Statement stmt = conn.createStatement();
 
-		System.out.println("---------------------------------Search By Country---------------------------------\n");
+		System.out.println("\n-----------------------------------------"
+							+ "Search By Country"
+							+ "-----------------------------------------\n");
 	    System.out.print("Enter a country: ");
 	    String country = scanner.nextLine().toUpperCase();
 	    
@@ -143,7 +145,9 @@ public class RegularUser extends User{
 		
 		Statement stmt = conn.createStatement();
 		
-		System.out.println("---------------------------------Search By State---------------------------------\n");
+		System.out.println("\n-----------------------------------------" 
+							+ "Search By State" 
+							+ "-----------------------------------------\n");
 	    System.out.print("Enter a state or province: ");
 	    String state = scanner.nextLine().toUpperCase();
 
@@ -179,7 +183,9 @@ public class RegularUser extends User{
 		
 		Statement stmt = conn.createStatement();
 		
-		System.out.println("---------------------------------Search By City---------------------------------\n");
+		System.out.println("\n-----------------------------------------" 
+							+ "Search By City" 
+							+ "-----------------------------------------\n");
 		System.out.print("Enter a city: ");
 		String city = scanner.nextLine().toUpperCase();
 
@@ -219,7 +225,9 @@ public class RegularUser extends User{
 		Statement stmt = conn.createStatement();
 
 		int postalCode;
-		System.out.println("---------------------------------Search By Postal Code---------------------------------\n");
+		System.out.println("\n-----------------------------------------" 
+							+ "Search By Postal Code" 
+							+ "-----------------------------------------\n");
 		System.out.print("Enter a postal code: ");
 		postalCode = scanner.nextInt( );	
 
@@ -254,7 +262,9 @@ public class RegularUser extends User{
    		   		
    		Statement stmt = conn.createStatement();
 
-		System.out.println("\n---------------------------------Search By Street Address---------------------------------\n");
+		System.out.println("\n-----------------------------------------" 
+							+ "Search By Street Address" 
+							+ "-----------------------------------------\n");
    		System.out.print("\nEnter an address: ");
    		String address = scanner.nextLine().trim();
 
@@ -289,7 +299,9 @@ public class RegularUser extends User{
    	   		
    		Statement stmt = conn.createStatement();
    		
-		System.out.println("\n---------------------------------Search By Category---------------------------------");
+		System.out.println("\n-----------------------------------------" 
+							+ "Search By Category" 
+							+ "-----------------------------------------");
    		int category = getCategoryChoice();
 
    		String qry = "select m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
@@ -365,7 +377,9 @@ public class RegularUser extends User{
    		
    		Statement stmt = conn.createStatement();
    		
-		System.out.println("\n---------------------------------Search By Property Type---------------------------------");
+		System.out.println("\n-----------------------------------------" 
+							+ "Search By Property Type" 
+							+ "-----------------------------------------\n");
    		int type = getTypeChoice();
    		System.out.println(type);
    		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
@@ -439,7 +453,9 @@ public class RegularUser extends User{
       
    		Statement stmt = conn.createStatement();
    		
-		System.out.println("\n---------------------------------Search By Number of Bedrooms---------------------------------");
+		System.out.println("\n-----------------------------------------" 
+							+ "Search By Number of Bedrooms"  
+							+ "-----------------------------------------\n");
    		
    		int numberOfBedrooms = 0;
    		boolean valid = false;
@@ -486,7 +502,9 @@ public class RegularUser extends User{
    		
    		Statement stmt = conn.createStatement();
    		
-   		System.out.println("\n---------------------------------Search By Number of Bathrooms---------------------------------");
+   		System.out.println("\n-----------------------------------------" 
+   							+ "Search By Number of Bathrooms" 
+   							+ "-----------------------------------------");
    		
    		int numberOfBathrooms = 0;
    		boolean valid = false;
@@ -653,7 +671,9 @@ public class RegularUser extends User{
    		
    		Statement stmt = conn.createStatement();
 
-   		System.out.println("\n---------------------------------Search By MLS Company---------------------------------");
+   		System.out.println("\n-----------------------------------------"
+   							+ "Search By MLS Company" 
+   							+ "-----------------------------------------\n");
    		int mlsCompany = getMlsId();
 
    		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
@@ -715,7 +735,9 @@ public class RegularUser extends User{
    	}
    	
    	private static final void printRegularUserMode() {
-   		System.out.println("---------------------------------Regular User mode---------------------------------");	
+   		System.out.println("-----------------------------------------" 
+   							+ "Regular User mode" 
+   							+ "----------------------------------------");	
    	}
    	
 }
