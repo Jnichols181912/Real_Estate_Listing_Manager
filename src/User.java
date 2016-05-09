@@ -67,9 +67,9 @@ public class User {
 				case 2:	AdminUser adminUser = new AdminUser();
 						adminUser.run();
 						break;
-						
-				default:System.out.println("Should never reach this case"); 
-						break;
+				case 3: quitProgram = true;
+						continue;
+				
 			}
 			
 			if (userTypeSelected && ! quitProgram) {
