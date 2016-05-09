@@ -49,7 +49,7 @@ public class RegularUser extends User{
 			} catch (NumberFormatException nfe) {
 				clearConsole();
 				printRegularUserMode();
-				System.out.println("\nYour input needs to be an integer in range [1,14]\n");
+				System.out.println("\nYour input needs to be an integer in range [1,12]\n");
 			}
 		}
 		
