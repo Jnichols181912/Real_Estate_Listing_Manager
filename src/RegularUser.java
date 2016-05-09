@@ -1,4 +1,5 @@
 import java.sql.*;
+import java.util.ArrayList;
 //import org.apache.derby.jdbc.ClientDriver;
 
 /**
@@ -17,37 +18,43 @@ public class RegularUser extends User{
 	}
 
 	@Override
-	void printMenuAndExecute() throws SQLException{
+	protected void printMenuAndExecute() throws SQLException{
 
 		int choice = 0;
 		boolean validChoice = false;
 		
+		clearConsole();
+		printRegularUserMode();
+		
 		while (!validChoice) {
 			System.out.println("Choose from one of the following options:"
-	                           + "\n\t1:  Search listing by country"
-	                           + "\n\t2:  Search listing by state"
-	                           + "\n\t3:  Search listing by city"
-	                           + "\n\t4:  Search listing by postal code"
-	                           + "\n\t5:  Search listing by address"
-	                           + "\n\t6:  Search listing by category"
-	                           + "\n\t7:  Search listing by type"
-	                           + "\n\t8:  Search listing by number of bedrooms"
-	                           + "\n\t9:  Search listing by number of bathrooms"
-	                           + "\n\t10: Search listing by price"
-	                           + "\n\t11: Search listing by date"
-	                           + "\n\t12: Search listing by MLS company"
-	                           + "\n\t13: Search listing by listing number");
+	                           + "\n\t1:  Search listings by country"
+	                           + "\n\t2:  Search listings by state"
+	                           + "\n\t3:  Search listings by city"
+	                           + "\n\t4:  Search listings by postal code"
+	                           + "\n\t5:  Search listings by street address"
+	                           + "\n\t6:  Search listings by list category (rent, purchase, etc.)"
+	                           + "\n\t7:  Search listings by property type (bi-level, ranch, etc.)"
+	                           + "\n\t8:  Search listings by number of bedrooms"
+	                           + "\n\t9:  Search listings by number of bathrooms"
+	                           + "\n\t10: Search listings by price"
+	                           + "\n\t11: Search listings by MLS company"
+	                           + "\n\t12: Cancel search");
 			System.out.print("Your choice ==> ");
 
 			try {
-				choice = Integer.parseInt(Menu.scanner.nextLine());
-				if (choice < 1 || choice > 13) throw new NumberFormatException();
+				choice = Integer.parseInt(scanner.nextLine());
+				if (choice < 1 || choice > 12) throw new NumberFormatException();
 				validChoice = true;
 			} catch (NumberFormatException nfe) {
-				Menu.clearConsole();
-				System.out.println("Your input needs to be an integer in range [1,13]");
+				clearConsole();
+				printRegularUserMode();
+				System.out.println("\nYour input needs to be an integer in range [1,14]\n");
 			}
 		}
+		
+		clearConsole();
+		printRegularUserMode();
 		
 		switch (choice) {
 		
@@ -81,139 +88,140 @@ public class RegularUser extends User{
 	  		case 10: InputPriceQuery();
 	  				 break;
 	  				 
-	  		case 11: InputDateQuery();
+	  		case 11: InputCompanyQuery();
 	  				 break;
-	  				
-	  		case 12: //InputCompanyQuery();
-	  				 break;
-	  				
-	  		case 13: //InputListingNumberQuery();
-	  				 break;
+	  				 
+	  		case 12: return;
 	  					
 	  		default: System.out.println("Error handling ensures that code will never reach here... if somehow this line gets printed our program has some major issues");
 	             	break;
 		}
 	}
 	
-
+	 /* * * * * * * * * *
+	  * COUNTRY QUERY DONE!
+	  */
 	// This method is for the query for all listings in a particular country.
-	public void InputCountryQuery() throws SQLException {
-		
+	private void InputCountryQuery() throws SQLException {
+
 		Statement stmt = conn.createStatement();
 
-		String country;
+		System.out.println("---------------------------------Search By Country---------------------------------\n");
 	    System.out.print("Enter a country: ");
-	    country = Menu.scanner.nextLine().toUpperCase();
-	    country = "'" + country + "'";
-	    String qry = "select m.MlsId, m.MlsName, a.StateOrProvince, a.City, a.FullStreetAddress "
+	    String country = scanner.nextLine().toUpperCase();
+	    
+	    String qry = "select m.MlsId, m.MlsName, l.listprice, a.StateOrProvince, a.City, a.FullStreetAddress "
 	                 + "from MLS m, LISTING l, ADDRESS a "
-	                 + "where a.Country = " + country + " "
+	                 + "where a.Country = " + "'" + country + "' "
 	                 + "and l.AddressId = a.AddressId "
 	                 + "and l.MlsId = m.MlsId";
 	    
 	    ResultSet rs = stmt.executeQuery(qry);
-
-	    	while (rs.next()) {
-	    		int mlsId = rs.getInt("MlsId");
-	    		String mlsName = rs.getString("MlsName");
-	    		//int price = rs.getInt("ListPrice");
-	    		String state = rs.getString("StateOrProvince");
-	    		String city = rs.getString("City");
-	    		String address = rs.getString("FullStreetAddress");
-	    		System.out.println(mlsId + "\t" + mlsName + "\t" + /*price +*/ "\t" + state + "\t" + city + "\t" + address);
-	    	}
-	    	System.out.println( );
-	    	rs.close();
+	    
+    	// Loop through the result set
+    	System.out.println("\nMLS Id\t\tMLS Name\t\t\t\t\t\t\t Price\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress\n");
+    	printLine();
+    	while (rs.next()) {
+    		int mlsId = rs.getInt("MlsId");
+    		String mlsName = rs.getString("MlsName");
+    		int price = rs.getInt("ListPrice");
+    		String state = rs.getString("StateOrProvince");
+    		String city = rs.getString("City");
+    		String address = rs.getString("FullStreetAddress");
+    		System.out.printf("%-8d \t%-50s \t%15d \t%-20s \t%-20s \t%-20s \t%-100s\n", mlsId, mlsName, price, city, state, country, address);
+    	}
+    	System.out.println( );
+    	rs.close();
 	}
-	   
+	
+	 /* * * * * * * * * *
+	  * STATE QUERY DONE!
+	  */
+	
 	// This method is for the query for all listings in a particular state or province.
-	public void InputStateQuery() throws SQLException {
+	private void InputStateQuery() throws SQLException {
 		
 		Statement stmt = conn.createStatement();
-
-	    String state;
+		
+		System.out.println("---------------------------------Search By State---------------------------------\n");
 	    System.out.print("Enter a state or province: ");
-	    state = Menu.scanner.nextLine( );
-	      
-	    state = state.toUpperCase();
+	    String state = scanner.nextLine().toUpperCase();
 
 	    String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.City, a.FullStreetAddress "
 	                 + "from MLS m, LISTING l, ADDRESS a "
-	                 + "where a.StateOrProvince = " + state + " "
+	                 + "where a.StateOrProvince = " + "'" + state + "' "
 	                 + "and l.AddressId = a.AddressId "
 	                 + "and l.MlsId = m.MlsId";
 	    ResultSet rs = stmt.executeQuery(qry);
-
-	    // If nothing is returned then say so. Otherwise display table results
-	    if (!rs.isBeforeFirst() ) {    
-	    	System.out.println("No listings exist for this state or province."); 
-	    } else {
-	      
-	    	// Loop through the result set
-	    	System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tCity" + "\tAddress");
-	    	
-	    	while (rs.next()) {
-	    		String mlsId = rs.getString("MlsId");
-	    		String mlsName = rs.getString("MlsName");
-	    		int price = rs.getInt("ListPrice");
-	    		String country = rs.getString("Country");
-	    		String city = rs.getString("City");
-	    		String address = rs.getString("FullStreetAddress");
-	    		System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + city + "\t" + address);
-	    	}
-	    	System.out.println( );
-	    	rs.close();
-	    }
+      
+    	// Loop through the result set
+    	System.out.println("\nMLS Id\t\tMLS Name\t\t\t\t\t\t\t Price\t\tCountry\t\t\tCity\t\t\tAddress\n");
+    	printLine();
+    	while (rs.next()) {
+    		int mlsId = rs.getInt("MlsId");
+    		String mlsName = rs.getString("MlsName");
+    		int price = rs.getInt("ListPrice");
+    		String country = rs.getString("Country");
+    		String city = rs.getString("City");
+    		String address = rs.getString("FullStreetAddress");
+    		System.out.printf("%-8d \t%-50s \t%15d \t%-20s \t%-20s \t%-100s\n", mlsId, mlsName, price, country, city, address);
+    	}
+    	
+    	System.out.println();
+    	rs.close();
 	}
-	   
+	
+	 /* * * * * * * * * *
+	  * CITY QUERY DONE!
+	  */
 	// This method is for the query for all listings in a particular city.
-	public void InputCityQuery() throws SQLException {
+	private void InputCityQuery() throws SQLException {
 		
 		Statement stmt = conn.createStatement();
-
-		String city;
+		
+		System.out.println("---------------------------------Search By City---------------------------------\n");
 		System.out.print("Enter a city: ");
-		city = Menu.scanner.nextLine( );
-      
-		city = city.toUpperCase();
+		String city = scanner.nextLine().toUpperCase();
 
-		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.State, a.FullStreetAddress "
+		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.FullStreetAddress "
                    	 + "from MLS m, LISTING l, ADDRESS a "
-                   	 + "where a.City = " + city + " "
+                   	 + "where a.City = " + "'" + city + "' "
                    	 + "and l.AddressId = a.AddressId "
                    	 + "and l.MlsId = m.MlsId";
+		
 		ResultSet rs = stmt.executeQuery(qry);
 
-		// If nothing is returned then say so. Otherwise display table results
-		if (!rs.isBeforeFirst() ) {    
-			System.out.println("No listings exist for this city."); 
-		} else {
-      
-			// Loop through the result set
-			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tAddress");
-    	  
-			while (rs.next()) {
-				String mlsId = rs.getString("MlsId");
-				String mlsName = rs.getString("MlsName");
-				int price = rs.getInt("ListPrice");
-				String country = rs.getString("Country");
-				String state = rs.getString("State");
-				String address = rs.getString("FullStreetAddress");
-				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + address);
-			}
-			System.out.println( );
-			rs.close();
+		// Loop through the result set
+		System.out.println("\nMLS Id\t\tMLS Name\t\t\t\t\t\t\t Price\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress\n");
+		printLine();
+		while (rs.next()) {
+			int mlsId = rs.getInt("MlsId");
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String address = rs.getString("FullStreetAddress");
+			System.out.printf("%-8d\t%-50s \t%15d\t\t%-20s\t%-20s\t%-20s\t%-100s\n",mlsId, mlsName, price, city, state, country, address);
 		}
+
+		System.out.println( );
+		rs.close();
+		
 	}
 
+	
+	 /* * * * * * * * * *
+	  * POSTAL QUERY DONE!
+	  */
 	// This method is for the query for all listings in a particular postal code.
-	public void InputPostalCodeQuery() throws SQLException {
+	private void InputPostalCodeQuery() throws SQLException {
 		
 		Statement stmt = conn.createStatement();
 
 		int postalCode;
+		System.out.println("---------------------------------Search By Postal Code---------------------------------\n");
 		System.out.print("Enter a postal code: ");
-		postalCode = Menu.scanner.nextInt( );	
+		postalCode = scanner.nextInt( );	
 
 		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress "
                    	 + "from MLS m, LISTING l, ADDRESS a "
@@ -222,343 +230,375 @@ public class RegularUser extends User{
                    	 + "and l.MlsId = m.MlsId";
 		ResultSet rs = stmt.executeQuery(qry);
 
-		// If nothing is returned then say so. Otherwise display table results
-		if (!rs.isBeforeFirst() ) {    
-			System.out.println("No listings exist for this postal code."); 
-		} else {
-      
-			// Loop through the result set
-			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
-    	  
-			while (rs.next()) {
-				String mlsId = rs.getString("MlsId");
-				String mlsName = rs.getString("MlsName");
-				int price = rs.getInt("ListPrice");
-				String country = rs.getString("Country");
-				String state = rs.getString("StateOrProvince");
-				String city = rs.getString("City");
-				String address = rs.getString("FullStreetAddress");
-				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-			}
-			System.out.println( );
-			rs.close();
+		// Loop through the result set
+		System.out.println("\nMLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress\n");
+		printLine();
+		while (rs.next()) {
+			String mlsId = rs.getString("MlsId");
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+			String address = rs.getString("FullStreetAddress");
+			System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
 		}
+		System.out.println();
+		rs.close();
 	}
-   
+	/* * * * * * * * * * * * * * * * *
+	 * ADDRESS QUERY DONE!
+	 */
    	// This method is for the query for all listings in a particular address.
-   	public void InputAddressQuery() throws SQLException {
+	private void InputAddressQuery() throws SQLException {
    		   		
    		Statement stmt = conn.createStatement();
 
-   		String address;
-   		System.out.print("Enter an address: ");
-   		address = Menu.scanner.nextLine( );
-      
-   		address = address.toUpperCase();
+		System.out.println("\n---------------------------------Search By Street Address---------------------------------\n");
+   		System.out.print("\nEnter an address: ");
+   		String address = scanner.nextLine().trim();
 
-   		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City,"
-                   	 + "from MLS m, LISTING l, ADDRESS a "
-                   	 + "where a.PostalCode = " + address + " "
+   		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City\n"
+                   	 + "from MLS m, LISTING l, ADDRESS a \n"
+                   	 + "where a.fullstreetaddress = '" + address + "' "
                    	 + "and l.AddressId = a.AddressId "
                    	 + "and l.MlsId = m.MlsId";
+
    		ResultSet rs = stmt.executeQuery(qry);
 
-   		// If nothing is returned then say so. Otherwise display table results
-   		if (!rs.isBeforeFirst() ) {    
-   			System.out.println("No listings exist for this adderss."); 
-   		} else {
-      
-   			// Loop through the result set
-   			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity");
-    	  
-   			while (rs.next()) {
-   				String mlsId = rs.getString("MlsId");
-   				String mlsName = rs.getString("MlsName");
-   				int price = rs.getInt("ListPrice");
-   				String country = rs.getString("Country");
-   				String state = rs.getString("StateOrProvince");
-   				String city = rs.getString("City");
-   				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city);
-   			}
-   			System.out.println( );
-   			rs.close();
-   		} 		
+		// print column names of results table
+		System.out.println("\nMLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity");
+		printLine();
+		// Populate table with results
+		while (rs.next()) {
+			int mlsId = rs.getInt("MlsId");
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+			System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city);
+		}
+		
+		System.out.println( );
+		rs.close(); 		
    	}
-   
-   	// Get the category number from the user
-   	public int getCategoryChoice() throws SQLException {
-   		
-   		int category = 0;
-	   
-   		Statement stmt = conn.createStatement();
-   		String qry = "Select c.* from CATEGORY";
-   		ResultSet rs = stmt.executeQuery(qry);
-	   
-   		System.out.print("Id" + "\tCategory");
-	   
-   		int rsLength = 0;
-   		if (rs.last()) {
-   			rsLength = rs.getRow();
-   			rs.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
-   		}
-	   
-   		int[] categoryId = new int[rsLength];
-   		String[] categoryName = new String[rsLength];
-	   
-   		int i = 0;
-   		while (rs.next()) {
-   			i++;
-   			categoryId[i] = rs.getInt("CategoryId");
-   			categoryName[i] = rs.getString("CategoryName");
-   		}
-	   
-   		System.out.print("Please choose a category number: ");
-   		category = Menu.scanner.nextInt();
-   		   		
-   		return category;
-   	}
-   
+
    	// This method is for the query for all listings with a particular category.
-   	public void InputCategoryQuery() throws SQLException {
+   	private void InputCategoryQuery() throws SQLException {
    	   		
    		Statement stmt = conn.createStatement();
-
+   		
+		System.out.println("\n---------------------------------Search By Category---------------------------------");
    		int category = getCategoryChoice();
 
-   		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
+   		String qry = "select m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
                    	 + "from MLS m, LISTING l, ADDRESS a, CATEGORY c "
                    	 + "where c.CategoryId = " + category + " "
                    	 + "and l.AddressId = a.AddressId "
                    	 + "and l.MlsId = m.MlsId";
    		ResultSet rs = stmt.executeQuery(qry);
 
-   		// If nothing is returned then say so. Otherwise display table results
-   		if (!rs.isBeforeFirst() ) {    
-   			System.out.println("No listings exist for this category."); 
-   		} else {
-      
-   			// Loop through the result set
-   			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
-    	  
-   			while (rs.next()) {
-   				String mlsId = rs.getString("MlsId");
-   				String mlsName = rs.getString("MlsName");
-   				int price = rs.getInt("ListPrice");
-   				String country = rs.getString("Country");
-   				String state = rs.getString("StateOrProvince");
-   				String city = rs.getString("City");
-   				String address = rs.getString("FullStreetAddress");
-   				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-   			}
-   			System.out.println( );
-   			rs.close();
-   		}
+		// Loop through the result set
+		System.out.println("\nMLS Name\t\tPrice\t\tCountry\t\t\tState\t\t\tCity\t\t\tAddress");
+		printLine();
+	  
+		while (rs.next()) {
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+			String address = rs.getString("FullStreetAddress");
+			System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsName, price, city, state, country,address);
+		}
+		
+		System.out.println( );
+		rs.close();
    	}
-   
-   	// Get the type number from the user
-   	public int getTypeChoice() throws SQLException {
-   		
-   		int type = 0;
+   	
+   	/* * * *
+   	 * CATEGORY CHOICE DONE!
+   	 */
+   	// Get the category number from the user
+   	private int getCategoryChoice() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
-   		String qry = "Select t.* from TYPE";
+   		
+   		String qry = "Select * from CATEGORY";
    		ResultSet rs = stmt.executeQuery(qry);
-	   
-   		System.out.print("Id" + "\tType");
-	   
-   		int rsLength = 0;
-   		if (rs.last()) {
-   			rsLength = rs.getRow();
-   			rs.beforeFirst(); // not rs.first() because the rs.next() below will move on, missing the first element
-   		}
-	   
-   		int[] typeId = new int[rsLength];
-   		String[] propertyType = new String[rsLength];
+   		
+
+   		System.out.print("Category\n------------------");
+	   	   
+   		ArrayList<Integer> categoryId = new ArrayList<Integer>();
 	   
    		int i = 0;
    		while (rs.next()) {
-   			i++;
-   			typeId[i] = rs.getInt("TypeId");
-   			propertyType[i] = rs.getString("PropertyType");
+   			categoryId.add(rs.getInt("CategoryId"));
+   			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("CategoryName"));
    		}
 	   
-
-   		System.out.print("Please choose a type number: ");
-   		type = Menu.scanner.nextInt();
+   		int categoryChoice = 0;
+   		boolean valid = false;
+   		while (!valid) {
+	   		try {
+	   	   		System.out.print("\n\nPlease choose a category: ");
+	   			categoryChoice = Integer.parseInt(scanner.nextLine());
+	   			
+	   			if(categoryChoice <= 0 || categoryChoice > (categoryId.size())) {
+	   				throw new NumberFormatException();
+	   			}
+	   			valid = true;
+	   		} catch(NumberFormatException nfe) {
+	   			System.out.println("Your selection was invalid, please try again");
+	   		}
+   		}
    		
-   		return type;
+   		return categoryId.get(categoryChoice - 1);
    	}
-   
+   /* * * *
+    * TYPE QUERY DONE!
+    */
    	// This method is for the query for all listings with a particular type.
-   	public void InputTypeQuery() throws SQLException {
-   		
+   	private void InputTypeQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
-
+   		
+		System.out.println("\n---------------------------------Search By Property Type---------------------------------");
    		int type = getTypeChoice();
-
-   		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
+   		System.out.println(type);
+   		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
                      + "from MLS m, LISTING l, ADDRESS a, TYPE t "
-                     + "where t.TypeId = " + type + " "
-                     + "and l.AddressId = a.AddressId "
-                     + "and l.MlsId = m.MlsId";
+                     + "where l.TypeId = " + type
+                     + " and l.AddressId = a.AddressId"
+                     + " and l.MlsId = m.MlsId";
    		ResultSet rs = stmt.executeQuery(qry);
 
-   		// If nothing is returned then say so. Otherwise display table results
-   		if (!rs.isBeforeFirst() ) {    
-   			System.out.println("No listings exist for this type."); 
-   		} else {
-      
-   			// Loop through the result set
-   			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
-    	  
-   			while (rs.next()) {
-   				String mlsId = rs.getString("MlsId");
-   				String mlsName = rs.getString("MlsName");
-   				int price = rs.getInt("ListPrice");
-   				String country = rs.getString("Country");
-   				String state = rs.getString("StateOrProvince");
-   				String city = rs.getString("City");
-   				String address = rs.getString("FullStreetAddress");
-   				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-   			}
-   			System.out.println( );
-   			rs.close();
-   		}
+		// Loop through the result set
+		System.out.println("MLS Name\t\tPrice\t\tCountry\t\t\tState\t\t\tCity\t\t\tAddress");
+		printLine();
+		while (rs.next()) {
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+			String address = rs.getString("FullStreetAddress");
+			System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n",mlsName, price, city, state, country, address);
+		}
+		System.out.println( );
+		rs.close();
+
    	}
-   
-   	// This method is for the query for all listings with a particular number of bedrooms.
-   	public void InputNumberOfBedroomsQuery() throws SQLException {
-      
-   		Statement stmt = conn.createStatement();
-      
-
-   		System.out.print("Please enter the number of bedrooms: ");
-   		int numOfBedrooms = Menu.scanner.nextInt();
-
-   		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
-                     + "from MLS m, LISTING l, ADDRESS a, TYPE t "
-                     + "where l.Bedrooms = " + numOfBedrooms + " "
-                     + "and l.AddressId = a.AddressId "
-                     + "and l.MlsId = m.MlsId";
-   		ResultSet rs = stmt.executeQuery(qry);
-
-   		// If nothing is returned then say so. Otherwise display table results
-   		if (!rs.isBeforeFirst() ) {    
-   			System.out.println("No listings exist with that number of bedrooms."); 
-   		} else {
-      
-   			// Loop through the result set
-   			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
-    	  
-   			while (rs.next()) {
-   				String mlsId = rs.getString("MlsId");
-   				String mlsName = rs.getString("MlsName");
-   				int price = rs.getInt("ListPrice");
-   				String country = rs.getString("Country");
-   				String state = rs.getString("StateOrProvince");
-   				String city = rs.getString("City");
-    		  	String address = rs.getString("FullStreetAddress");
-    		  	System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-   			}
-   			System.out.println( );
-   			rs.close();
-   		}
-   	}
-   
-   	// This method is for the query for all listings with a particular number of bathrooms.
-   	public void InputNumberOfBathroomsQuery() throws SQLException {
+   	/* * *
+   	 * TYPE CHOICE DONE!
+   	 */
+   	// Get the type number from the user
+   	private int getTypeChoice() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
-      
-     	System.out.print("Please enter the number of bathrooms: ");
-     	int numOfBathrooms = Menu.scanner.nextInt();
+   		
+   		String qry = "Select * from TYPE";
+   		ResultSet rs = stmt.executeQuery(qry);
 
-     	String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
-                     + "from MLS m, LISTING l, ADDRESS a, TYPE t "
-                     + "where l.Bathrooms = " + numOfBathrooms + " "
-                     + "and l.AddressId = a.AddressId "
-                     + "and l.MlsId = m.MlsId";
+   		System.out.print("Property Type\n------------------");
+	   	   
+   		ArrayList<Integer> typeId = new ArrayList<Integer>();
+	   
+   		int i = 0;
+   		while (rs.next()) {
+   			typeId.add(rs.getInt("typeId"));
+   			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("propertytype"));
+   		}
+	   
+   		int typeChoice = 0;
+   		boolean valid = false;
+   		while (!valid) {
+	   		try {
+	   	   		System.out.print("\n\nPlease choose a category: ");
+	   			typeChoice = Integer.parseInt(scanner.nextLine());
+	   			
+	   			if(typeChoice <= 0 || typeChoice > (typeId.size())) {
+	   				throw new NumberFormatException();
+	   			}
+	   			valid = true;
+	   		} catch(NumberFormatException nfe) {
+	   			System.out.println("Your selection was invalid, please try again");
+	   		}
+   		}
+   		
+   		return typeId.get(typeChoice - 1);
+   	}
+   	
+   	/* * * * *
+   	 * BEDROOM QUERY DONE!
+   	 */
+   	// This method is for the query for all listings with a particular number of bedrooms.
+   	private void InputNumberOfBedroomsQuery() throws SQLException {
+      
+   		Statement stmt = conn.createStatement();
+   		
+		System.out.println("\n---------------------------------Search By Number of Bedrooms---------------------------------");
+   		
+   		int numberOfBedrooms = 0;
+   		boolean valid = false;
+   		while(!valid) {
+   	   		System.out.print("Please enter the number of bedrooms: ");
+	   		try {
+	   			numberOfBedrooms = Integer.parseInt(scanner.nextLine());
+	   			if (numberOfBedrooms < 1) {
+	   				throw new NumberFormatException();
+	   			}
+	   			valid = true;
+	   		} catch(NumberFormatException nfe) {
+	   			System.out.println("Invalid number of bathrooms. Positive integers only.");
+	   		}
+   		}
+   		
+   		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
+                     + " from MLS m, LISTING l, ADDRESS a, TYPE t \n"
+                     + " where l.Bedrooms = " + numberOfBedrooms
+                     + " and l.AddressId = a.AddressId"
+                     + " and l.MlsId = m.MlsId";
+   		ResultSet rs = stmt.executeQuery(qry);
+
+		// Loop through the result set
+		System.out.println("MLS Name\t\tPrice\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress");
+		printLine();
+		while (rs.next()) {
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+		  	String address = rs.getString("FullStreetAddress");
+		  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsName, price, country, state, city, address);
+		}
+		System.out.println( );
+		rs.close();
+   	}
+   	/* * * * *
+   	 * Bathroom QUERY DONE!
+   	 */
+   	// This method is for the query for all listings with a particular number of bathrooms.
+   	private void InputNumberOfBathroomsQuery() throws SQLException {
+   		
+   		Statement stmt = conn.createStatement();
+   		
+   		System.out.println("\n---------------------------------Search By Number of Bathrooms---------------------------------");
+   		
+   		int numberOfBathrooms = 0;
+   		boolean valid = false;
+   		while(!valid) {
+   	   		System.out.print("Please enter the number of bathrooms: ");
+	   		try {
+	   			numberOfBathrooms = Integer.parseInt(scanner.nextLine());
+	   			if (numberOfBathrooms < 0) {
+	   				throw new NumberFormatException();
+	   			}
+	   			valid = true;
+	   		} catch(NumberFormatException nfe) {
+	   			System.out.println("Invalid number of bathrooms. Positive integers only.");
+	   		}
+   		}
+
+     	String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
+                     + " from MLS m, LISTING l, ADDRESS a, TYPE t \n"
+                     + " where l.Bathrooms = " + numberOfBathrooms
+                     + " and l.AddressId = a.AddressId "
+                     + " and l.MlsId = m.MlsId";
      	ResultSet rs = stmt.executeQuery(qry);
 
-     	// If nothing is returned then say so. Otherwise display table results
-      	if (!rs.isBeforeFirst() ) {    
-      		System.out.println("No listings exist with that number of bathrooms."); 
-      	} else {
-      
-      		// Loop through the result set
-      		System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
-    	  
-      		while (rs.next()) {
-      			String mlsId = rs.getString("MlsId");
-      			String mlsName = rs.getString("MlsName");
-      			int price = rs.getInt("ListPrice");
-      			String country = rs.getString("Country");
-      			String state = rs.getString("StateOrProvince");
-      			String city = rs.getString("City");
-      			String address = rs.getString("FullStreetAddress");
-      			System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-      		}
-      		System.out.println( );
-      		rs.close();
-      	}
+  		// Loop through the result set
+		System.out.println("MLS Name\t\tPrice\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress");
+		printLine();
+  		while (rs.next()) {
+  			String mlsName = rs.getString("MlsName");
+  			int price = rs.getInt("ListPrice");
+  			String country = rs.getString("Country");
+  			String state = rs.getString("StateOrProvince");
+  			String city = rs.getString("City");
+  			String address = rs.getString("FullStreetAddress");
+		  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsName, price, country, state, city, address);
+  		}
+  		System.out.println( );
+  		rs.close();
    	}
    
    	// This method is for the query for all listings with a price greater or lower than the users input.
-   	public void InputPriceQuery() throws SQLException {
+   	private void InputPriceQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
    		
    		String qry = null;
-
-   		System.out.print("Please enter the price: ");
-   		int numOfBathrooms = Menu.scanner.nextInt();
-      
-   		System.out.println("Choose one of the following:"
-    		  			   + "\t1: Equal to or greater than"
-    		  			   + "\t2: Equal to or lower than");
-   		System.out.print("Please choose: ");
-   		int choice = Menu.scanner.nextInt();
-      
+   		int price = 0; 
+   		
+   		boolean valid = false;
+   		while (!valid) {
+   			
+   	   		System.out.print("Please enter the price: ");
+	   		try {
+	   			price = Integer.parseInt(scanner.nextLine());
+	   			valid = true;
+	   		} catch (NumberFormatException nfe) {
+	   			System.out.println("You have entered an invalid price. Please ensure your price is an integer format.");
+	   		}
+   		}
+   		
+   		valid = false;
+   		int choice = 0;
+   		while (!valid) {
+   			try {
+   				System.out.println("Choose one of the following:\n\t1: Greater than\n\t2: Less than or equal to\n");
+   				System.out.print("Please choose: ");
+   				choice = Integer.parseInt(scanner.nextLine());
+   				if (choice != 1 && choice != 2) {
+   					throw new NumberFormatException();
+   				}
+   				valid = true;
+   			} catch(NumberFormatException nfe) {
+   				System.out.println("Your input was invalid, Please select option 1 or option 2 by the integer representation");
+   			}
+   		}
+   		
    		if (choice == 1) {
-   			qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
+   			qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress "
                   + "from MLS m, LISTING l, ADDRESS a, TYPE t "
-                  + "where l.Bathrooms >= " + numOfBathrooms + " "
+                  + "where l.listprice > " + price + " "
                   + "and l.AddressId = a.AddressId "
                   + "and l.MlsId = m.MlsId";
    		} else if (choice == 2) {
-   			qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
-                  + "from MLS m, LISTING l, ADDRESS a, TYPE t "
-                  + "where l.Bathrooms <= " + numOfBathrooms + " "
-                  + "and l.AddressId = a.AddressId "
-                  + "and l.MlsId = m.MlsId";
+   			qry = "select distinct m.MlsName, l.ListPrice, a.City, a.StateOrProvince, a.Country, a.FullStreetAddress"
+                  + " from MLS m, LISTING l, ADDRESS a, TYPE t "
+                  + " where l.listprice <= " + price + " "
+                  + " and l.AddressId = a.AddressId "
+                  + " and l.MlsId = m.MlsId";
    		}
       
    		ResultSet rs = stmt.executeQuery(qry);
 
-   		// If nothing is returned then say so. Otherwise display table results
-   		if (!rs.isBeforeFirst() ) {    
-   			System.out.println("No listings exist with that number of bathrooms."); 
-   		} else {
-      
-   			// Loop through the result set
-   			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
-    	  
-   			while (rs.next()) {
-   				String mlsId = rs.getString("MlsId");
-   				String mlsName = rs.getString("MlsName");
-   				int price = rs.getInt("ListPrice");
-   				String country = rs.getString("Country");
-   				String state = rs.getString("StateOrProvince");
-   				String city = rs.getString("City");
-   				String address = rs.getString("FullStreetAddress");
-   				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-   			}
-   			System.out.println( );
-   			rs.close();
-   		}
+		// Loop through the result set
+		System.out.println("MLS Name\t\tPrice\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress");
+		printLine();
+		while (rs.next()) {
+			String mlsName = rs.getString("MlsName");
+			int priceQ = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+			String address = rs.getString("FullStreetAddress");
+		  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsName, priceQ, country, state, city, address);
+		}
+		System.out.println( );
+		rs.close();
    	}
-   
+ 
+   	
+   	/* * * *
+   	 * THIS WONT WORK BECAUSE WE STORE IT IN THE DB AS A STRING, NOT INTEGER GREATER THAN LESS THAN WONT WORK
+   	 */
+   	/*  
    	// This method is for the query for all listings with a particular number of bathrooms.
    	public void InputDateQuery() throws SQLException {
    		
@@ -567,13 +607,13 @@ public class RegularUser extends User{
    		String qry = null;
 
    		System.out.print("Please enter the date(yyyy-mm-dd): ");
-   		String date = Menu.scanner.nextLine();
+   		String date = scanner.nextLine();
 	      
    		System.out.println("Choose one of the following:"
 	    		  		   + "\t1: Equal to or greater than"
 	    		  		   + "\t2: Equal to or lower than");
    		System.out.print("Please choose: ");
-   		int choice = Menu.scanner.nextInt();
+   		int choice = scanner.nextInt();
 	      
    		if (choice == 1) {
    			qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
@@ -591,65 +631,92 @@ public class RegularUser extends User{
 	      
    		ResultSet rs = stmt.executeQuery(qry);
 
-   		// If nothing is returned then say so. Otherwise display table results
-   		if (!rs.isBeforeFirst() ) {
-   			System.out.println("No listings exist with that number of bathrooms."); 
-   		} else {
-		   
-   			// Loop through the result set
-   			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
-		   
-   			while (rs.next()) {
-   				String mlsId = rs.getString("MlsId");
-   				String mlsName = rs.getString("MlsName");
-   				int price = rs.getInt("ListPrice");
-   				String country = rs.getString("Country");
-   				String state = rs.getString("StateOrProvince");
-   				String city = rs.getString("City");
-   				String address = rs.getString("FullStreetAddress");
-   				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-   			}
-   			System.out.println( );
-   			rs.close();
-   		}
-   	}
+		// Loop through the result set
+		System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
+	   
+		while (rs.next()) {
+			String mlsId = rs.getString("MlsId");
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+			String address = rs.getString("FullStreetAddress");
+			System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
+		}
+		System.out.println( );
+		rs.close();
+   	}*/
    
    	// This method is for the query for all listings with a particular number of bathrooms.
-   	public void InputMlsCompanyQuery() throws SQLException {
+   	public void InputCompanyQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
 
-   		System.out.print("Please enter the mls company acronym: ");
-   		String mlsCompany = Menu.scanner.nextLine();
+   		System.out.println("\n---------------------------------Search By MLS Company---------------------------------");
+   		int mlsCompany = getMlsId();
 
-   		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress"
-                   	 + "from MLS m, LISTING l, ADDRESS a, TYPE t "
-                   	 + "where l.Bathrooms = " + mlsCompany + " "
-                   	 + "and l.AddressId = a.AddressId "
-                   	 + "and l.MlsId = m.MlsId";
+   		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
+                   	 + " from MLS m, LISTING l, ADDRESS a, TYPE t "
+                   	 + " where m.MLSID = " + mlsCompany
+                   	 + " and l.AddressId = a.AddressId "
+                   	 + " and l.MlsId = m.MlsId";
    		ResultSet rs = stmt.executeQuery(qry);
 
-   		// If nothing is returned then say so. Otherwise display table results
-   		if (!rs.isBeforeFirst() ) {    
-   			System.out.println("No listings exist with that number of bathrooms."); 
-   		} else {
-      
-   			// Loop through the result set
-   			System.out.println("MLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress");
+		// Loop through the result set
+		System.out.println("MLS Name\t\tPrice\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress");
     	  
-   			while (rs.next()) {
-   				String mlsId = rs.getString("MlsId");
-   				String mlsName = rs.getString("MlsName");
-   				int price = rs.getInt("ListPrice");
-   				String country = rs.getString("Country");
-   				String state = rs.getString("StateOrProvince");
-   				String city = rs.getString("City");
-   				String address = rs.getString("FullStreetAddress");
-   				System.out.println(mlsId + "\t" + mlsName + "\t" + price + "\t" + country + "\t" + state + "\t" + city + "\t" + address);
-   			}
-	    	System.out.println( );
-	    	rs.close();
-   		}
+		while (rs.next()) {
+			String mlsName = rs.getString("MlsName");
+			int price = rs.getInt("ListPrice");
+			String country = rs.getString("Country");
+			String state = rs.getString("StateOrProvince");
+			String city = rs.getString("City");
+			String address = rs.getString("FullStreetAddress");
+		  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsName, price, country, state, city, address);
+		}
+    	System.out.println( );
+    	rs.close();
 	}
+   	
+   	private int getMlsId() throws SQLException {
+   		
+   		Statement stmt = conn.createStatement();
+   		
+   		String qry = "Select * from MLS";
+   		ResultSet rs = stmt.executeQuery(qry);
+	   	   
+   		ArrayList<Integer> MlsId = new ArrayList<Integer>();
+   		
+   		System.out.print("MLS Companies\n------------------");
+   		int i = 0;
+   		while (rs.next()) {
+   			MlsId.add(rs.getInt("MlsId"));
+   			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("MLSNAME"));
+   		}
+	   
+   		int choice = 0;
+   		boolean valid = false;
+   		while (!valid) {
+	   		try {
+	   	   		System.out.print("\n\nPlease choose a MLS Company: ");
+	   			choice = Integer.parseInt(scanner.nextLine());
+	   			
+	   			if(choice <= 0 || choice > (MlsId.size())) {
+	   				throw new NumberFormatException();
+	   			}
+	   			valid = true;
+	   		} catch(NumberFormatException nfe) {
+	   			System.out.println("Your selection was invalid, please try again");
+	   		}
+   		}
+   		
+   		return MlsId.get(choice - 1);
+   	}
+   	
+   	private static final void printRegularUserMode() {
+   		System.out.println("---------------------------------Regular User mode---------------------------------");	
+   	}
+   	
 }
 

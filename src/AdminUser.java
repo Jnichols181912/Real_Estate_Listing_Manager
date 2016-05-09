@@ -17,7 +17,7 @@ public class AdminUser extends User{
 	}
 
 	@Override
-	void printMenuAndExecute() {
+	protected void printMenuAndExecute() {
 		// TODO Auto-generated method stub
 		
 	}
