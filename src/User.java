@@ -21,7 +21,7 @@ public class User {
 	private static final String ANSI_CLS = "\u001b[2J";
 	private static final String ANSI_HOME = "\u001b[H";
 	public static Scanner scanner;
-	protected Connection conn;
+	protected static Connection conn;
 	
 	/**
 	 * @param args
