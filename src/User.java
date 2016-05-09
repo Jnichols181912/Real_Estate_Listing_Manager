@@ -74,15 +74,19 @@ public class User {
 			
 			if (userTypeSelected && ! quitProgram) {
 				
-				System.out.print("Would you like to continue or quit? (c/q) ");
 				String choiceString = null;
 				
 				while(choiceString == null || choiceString.trim().isEmpty()) {
+					System.out.print("Would you like to continue or quit? (c/q) ");
 					choiceString = scanner.nextLine();
-				}
-				
-				if (Character.toLowerCase(choiceString.trim().charAt(0)) == 'q') {
-					quitProgram = true;
+					if (!choiceString.trim().isEmpty()) { 
+						if (Character.toLowerCase(choiceString.trim().charAt(0)) == 'q') {
+							quitProgram = true;
+						} else if (Character.toLowerCase(choiceString.trim().charAt(0)) != 'c') {
+							System.out.println("Please make a selection");
+							choiceString = null;
+						}
+					}
 				}
 			}
 		}
