@@ -1,18 +1,21 @@
 import java.sql.*;
 import java.util.ArrayList;
-//import org.apache.derby.jdbc.ClientDriver;
 
 /**
+ * RegularUser is an innerclass of user that will be instantiated if the user
+ * decides to enter regular user mode to execute regular queries
  * 
- */
-
-/**
- * @author allen
- *
+ * @author Allen Bui (x339y958), John Nichols()
+ * @version 1
  */
 
 public class RegularUser extends User{
 	
+	/**
+	 * a constructor that isnt really necessary,
+	 * but we added it for completeness. it ultimately calls 
+	 * on the default constructor of the super class
+	 */
 	public RegularUser() {
 		super();
 	}
@@ -23,9 +26,11 @@ public class RegularUser extends User{
 		int choice = 0;
 		boolean validChoice = false;
 		
+		// display the regular user screen
 		clearConsole();
 		printRegularUserMode();
 		
+		// display user options and loop until a valid selection has been made
 		while (!validChoice) {
 			System.out.println("Choose from one of the following options:"
 	                           + "\n\t1:  Search listings by country"
@@ -53,9 +58,11 @@ public class RegularUser extends User{
 			}
 		}
 		
+		// clean the screen
 		clearConsole();
 		printRegularUserMode();
 		
+		// call the proper method to execute the user's requested query
 		switch (choice) {
 		
 	  		case 1:  InputCountryQuery();
@@ -98,29 +105,37 @@ public class RegularUser extends User{
 		}
 	}
 	
-	 /* * * * * * * * * *
-	  * COUNTRY QUERY DONE!
-	  */
-	// This method is for the query for all listings in a particular country.
+	/**
+	 * InputCountryQuery is a method that allows the user to search the 
+	 * database according to a particular country
+	 * @throws SQLException
+	 */
 	private void InputCountryQuery() throws SQLException {
 
 		Statement stmt = conn.createStatement();
-
+		
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		System.out.println("\n-----------------------------------------"
 							+ "Search By Country"
 							+ "-----------------------------------------\n");
 	    System.out.print("Enter a country: ");
 	    String country = scanner.nextLine().toUpperCase();
 	    
+	    // build the query string
 	    String qry = "select m.MlsId, m.MlsName, l.listprice, a.StateOrProvince, a.City, a.FullStreetAddress "
 	                 + "from MLS m, LISTING l, ADDRESS a "
 	                 + "where a.Country = " + "'" + country + "' "
 	                 + "and l.AddressId = a.AddressId "
 	                 + "and l.MlsId = m.MlsId";
 	    
+	    // execute the query
 	    ResultSet rs = stmt.executeQuery(qry);
 	    
-    	// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
     	System.out.println("\nMLS Id\t\tMLS Name\t\t\t\t\t\t\t Price\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress\n");
     	printLine();
     	while (rs.next()) {
@@ -135,30 +150,38 @@ public class RegularUser extends User{
     	System.out.println( );
     	rs.close();
 	}
-	
-	 /* * * * * * * * * *
-	  * STATE QUERY DONE!
-	  */
-	
-	// This method is for the query for all listings in a particular state or province.
+
+	/**
+	 * InputStateQuery is a method that allows a user to query a database by 
+	 * a particular state or province.
+	 * @throws SQLException
+	 */
 	private void InputStateQuery() throws SQLException {
 		
 		Statement stmt = conn.createStatement();
 		
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		System.out.println("\n-----------------------------------------" 
 							+ "Search By State" 
 							+ "-----------------------------------------\n");
 	    System.out.print("Enter a state or province: ");
 	    String state = scanner.nextLine().toUpperCase();
 
+	    // Build the query string
 	    String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.City, a.FullStreetAddress "
 	                 + "from MLS m, LISTING l, ADDRESS a "
 	                 + "where a.StateOrProvince = " + "'" + state + "' "
 	                 + "and l.AddressId = a.AddressId "
 	                 + "and l.MlsId = m.MlsId";
+	    
+	    // execute the query
 	    ResultSet rs = stmt.executeQuery(qry);
       
-    	// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
     	System.out.println("\nMLS Id\t\tMLS Name\t\t\t\t\t\t\t Price\t\tCountry\t\t\tCity\t\t\tAddress\n");
     	printLine();
     	while (rs.next()) {
@@ -175,29 +198,37 @@ public class RegularUser extends User{
     	rs.close();
 	}
 	
-	 /* * * * * * * * * *
-	  * CITY QUERY DONE!
-	  */
-	// This method is for the query for all listings in a particular city.
+	/**
+	 * InputCityQuery is a method for querying all listings by a particular city
+	 * @throws SQLException
+	 */
 	private void InputCityQuery() throws SQLException {
 		
 		Statement stmt = conn.createStatement();
-		
+
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		System.out.println("\n-----------------------------------------" 
 							+ "Search By City" 
 							+ "-----------------------------------------\n");
 		System.out.print("Enter a city: ");
 		String city = scanner.nextLine().toUpperCase();
 
+		
+		// Build the query string
 		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.FullStreetAddress "
                    	 + "from MLS m, LISTING l, ADDRESS a "
                    	 + "where a.City = " + "'" + city + "' "
                    	 + "and l.AddressId = a.AddressId "
                    	 + "and l.MlsId = m.MlsId";
 		
+		// execute the query
 		ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("\nMLS Id\t\tMLS Name\t\t\t\t\t\t\t Price\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress\n");
 		printLine();
 		while (rs.next()) {
@@ -211,19 +242,24 @@ public class RegularUser extends User{
 		}
 
 		System.out.println( );
+		
+		//close connection
 		rs.close();
 		
 	}
 
-	
-	 /* * * * * * * * * *
-	  * POSTAL QUERY DONE!
-	  */
-	// This method is for the query for all listings in a particular postal code.
+	/**
+	 * InputPostalCodeQuery is a method that allows a user to 
+	 * search the database by a particular postal code
+	 * @throws SQLException
+	 */
 	private void InputPostalCodeQuery() throws SQLException {
 		
 		Statement stmt = conn.createStatement();
 
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		int postalCode;
 		System.out.println("\n-----------------------------------------" 
 							+ "Search By Postal Code" 
@@ -231,14 +267,20 @@ public class RegularUser extends User{
 		System.out.print("Enter a postal code: ");
 		postalCode = scanner.nextInt( );	
 
+		// Build the query string		 
 		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress "
                    	 + "from MLS m, LISTING l, ADDRESS a "
                    	 + "where a.PostalCode = " + postalCode + " "
                    	 + "and l.AddressId = a.AddressId "
                    	 + "and l.MlsId = m.MlsId";
+		
+		 // execute the query 
 		ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
+
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("\nMLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity" + "\tAddress\n");
 		printLine();
 		while (rs.next()) {
@@ -254,29 +296,38 @@ public class RegularUser extends User{
 		System.out.println();
 		rs.close();
 	}
-	/* * * * * * * * * * * * * * * * *
-	 * ADDRESS QUERY DONE!
+
+	/**
+	 * InputAddressQuery allows the user to query the database 
+	 * by a particular address.
+	 * @throws SQLException
 	 */
-   	// This method is for the query for all listings in a particular address.
 	private void InputAddressQuery() throws SQLException {
    		   		
    		Statement stmt = conn.createStatement();
 
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		System.out.println("\n-----------------------------------------" 
 							+ "Search By Street Address" 
 							+ "-----------------------------------------\n");
    		System.out.print("\nEnter an address: ");
    		String address = scanner.nextLine().trim();
-
+		
+   		// Build the query string	
    		String qry = "select m.MlsId, m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City\n"
                    	 + "from MLS m, LISTING l, ADDRESS a \n"
                    	 + "where a.fullstreetaddress = '" + address + "' "
                    	 + "and l.AddressId = a.AddressId "
                    	 + "and l.MlsId = m.MlsId";
 
+   		// execute the query
    		ResultSet rs = stmt.executeQuery(qry);
 
-		// print column names of results table
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("\nMLS Id" + "\tMLS Name" + "\tPrice" + "\tCountry" + "\tState" + "\tCity");
 		printLine();
 		// Populate table with results
@@ -294,24 +345,35 @@ public class RegularUser extends User{
 		rs.close(); 		
    	}
 
-   	// This method is for the query for all listings with a particular category.
+	/**
+	 * InputCategoryQuery is a method that allows the user to execute a database
+	 * query by a particular category
+	 * @throws SQLException
+	 */
    	private void InputCategoryQuery() throws SQLException {
    	   		
    		Statement stmt = conn.createStatement();
    		
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		System.out.println("\n-----------------------------------------" 
 							+ "Search By Category" 
 							+ "-----------------------------------------");
    		int category = getCategoryChoice();
-
+   		
+   		// build the query string
    		String qry = "select m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
                    	 + "from MLS m, LISTING l, ADDRESS a, CATEGORY c "
                    	 + "where c.CategoryId = " + category + " "
                    	 + "and l.AddressId = a.AddressId "
                    	 + "and l.MlsId = m.MlsId";
+   		// execute the query
    		ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("\nMLS Name\t\tPrice\t\tCountry\t\t\tState\t\t\tCity\t\t\tAddress");
 		printLine();
 	  
@@ -329,20 +391,32 @@ public class RegularUser extends User{
 		rs.close();
    	}
    	
-   	/* * * *
-   	 * CATEGORY CHOICE DONE!
+   	/**
+   	 * getCategoryChoice is a helper method that is used to display the various categories and allows
+   	 * the user to select the desired category that he/she would like to search by
+   	 * @return categoryId type int that is the primary key to a category the user chose to query by
+   	 * @throws SQLException
    	 */
-   	// Get the category number from the user
    	private int getCategoryChoice() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
    		
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * Get all of the property categories that are in the DB *
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+   		// build the query string
    		String qry = "Select * from CATEGORY";
+
+   		// execute the query
    		ResultSet rs = stmt.executeQuery(qry);
    		
-
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * Display the results to the user and let them choose *
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * * */
    		System.out.print("Category\n------------------");
-	   	   
+	   	
+   		// store the primary keys into an ArrayList
    		ArrayList<Integer> categoryId = new ArrayList<Integer>();
 	   
    		int i = 0;
@@ -350,7 +424,8 @@ public class RegularUser extends User{
    			categoryId.add(rs.getInt("CategoryId"));
    			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("CategoryName"));
    		}
-	   
+	    
+   		// force the user to select a valid option
    		int categoryChoice = 0;
    		boolean valid = false;
    		while (!valid) {
@@ -367,29 +442,40 @@ public class RegularUser extends User{
 	   		}
    		}
    		
+   		// return the chosen category
    		return categoryId.get(categoryChoice - 1);
    	}
-   /* * * *
-    * TYPE QUERY DONE!
-    */
-   	// This method is for the query for all listings with a particular type.
+   	
+   	/**
+   	 * InputTypeQuery is a method that allows a user to query the database by property type
+   	 * @throws SQLException
+   	 */
    	private void InputTypeQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
    		
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		System.out.println("\n-----------------------------------------" 
 							+ "Search By Property Type" 
 							+ "-----------------------------------------\n");
+		// get the property type by displaying the options to the user
    		int type = getTypeChoice();
-   		System.out.println(type);
+
+   		// build the query string
    		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
                      + "from MLS m, LISTING l, ADDRESS a, TYPE t "
                      + "where l.TypeId = " + type
                      + " and l.AddressId = a.AddressId"
                      + " and l.MlsId = m.MlsId";
+   		
+   		// execute the query
    		ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("MLS Name\t\tPrice\t\tCountry\t\t\tState\t\t\tCity\t\t\tAddress");
 		printLine();
 		while (rs.next()) {
@@ -405,19 +491,33 @@ public class RegularUser extends User{
 		rs.close();
 
    	}
-   	/* * *
-   	 * TYPE CHOICE DONE!
+   	
+   	/**
+   	 * getTypeChoice is a helper method that displays the property types that are currently 
+   	 * in the databse and lets the user choose the type that they would like to search by
+   	 * @return TypeId of type int which is the primary key of the particular type
+   	 * @throws SQLException
    	 */
-   	// Get the type number from the user
    	private int getTypeChoice() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
    		
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * Get all of the property types that are in the DB  *
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * */
+   		
+   		// build the query string
    		String qry = "Select * from TYPE";
+   		
+   		// execute the query for all property types
    		ResultSet rs = stmt.executeQuery(qry);
 
+		/* * * * * * * * * * * * * * * * * * * * * * * * * * * *
+		 * Display the results to the user and let them choose *
+		 * * * * * * * * * * * * * * * * * * * * * * * * * * * */
    		System.out.print("Property Type\n------------------");
-	   	   
+   		
+   		// store all primary keys into an ArrayList
    		ArrayList<Integer> typeId = new ArrayList<Integer>();
 	   
    		int i = 0;
@@ -425,7 +525,8 @@ public class RegularUser extends User{
    			typeId.add(rs.getInt("typeId"));
    			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("propertytype"));
    		}
-	   
+   		
+   		// force the user to select a valid option
    		int typeChoice = 0;
    		boolean valid = false;
    		while (!valid) {
@@ -445,20 +546,26 @@ public class RegularUser extends User{
    		return typeId.get(typeChoice - 1);
    	}
    	
-   	/* * * * *
-   	 * BEDROOM QUERY DONE!
+   	/**
+   	 * InputNumberOfBedroomsQuery is a method that allows the user to query
+   	 * according to a desired number of bedrooms.
+   	 * @throws SQLException
    	 */
-   	// This method is for the query for all listings with a particular number of bedrooms.
    	private void InputNumberOfBedroomsQuery() throws SQLException {
       
    		Statement stmt = conn.createStatement();
    		
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
 		System.out.println("\n-----------------------------------------" 
 							+ "Search By Number of Bedrooms"  
 							+ "-----------------------------------------\n");
    		
    		int numberOfBedrooms = 0;
    		boolean valid = false;
+   		
+   		// force the user to enter a valid number
    		while(!valid) {
    	   		System.out.print("Please enter the number of bedrooms: ");
 	   		try {
@@ -472,14 +579,19 @@ public class RegularUser extends User{
 	   		}
    		}
    		
+   		// build the query string
    		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
                      + " from MLS m, LISTING l, ADDRESS a, TYPE t \n"
                      + " where l.Bedrooms = " + numberOfBedrooms
                      + " and l.AddressId = a.AddressId"
                      + " and l.MlsId = m.MlsId";
+   		
+   		// execute the query
    		ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("MLS Name\t\tPrice\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress");
 		printLine();
 		while (rs.next()) {
@@ -491,23 +603,32 @@ public class RegularUser extends User{
 		  	String address = rs.getString("FullStreetAddress");
 		  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsName, price, country, state, city, address);
 		}
-		System.out.println( );
+		System.out.println();
+		
+		// close the resource
 		rs.close();
    	}
-   	/* * * * *
-   	 * Bathroom QUERY DONE!
+
+   	/**
+   	 * InputNumberOfBathroomsQuery is a method that allows the user to query
+   	 * according to a desired number of bathrooms.
+   	 * @throws SQLException
    	 */
-   	// This method is for the query for all listings with a particular number of bathrooms.
    	private void InputNumberOfBathroomsQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
    		
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
    		System.out.println("\n-----------------------------------------" 
    							+ "Search By Number of Bathrooms" 
    							+ "-----------------------------------------");
    		
    		int numberOfBathrooms = 0;
    		boolean valid = false;
+   		
+   		// force the user to enter a valid number
    		while(!valid) {
    	   		System.out.print("Please enter the number of bathrooms: ");
 	   		try {
@@ -521,14 +642,19 @@ public class RegularUser extends User{
 	   		}
    		}
 
+   		// build the query string
      	String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
                      + " from MLS m, LISTING l, ADDRESS a, TYPE t \n"
                      + " where l.Bathrooms = " + numberOfBathrooms
                      + " and l.AddressId = a.AddressId "
                      + " and l.MlsId = m.MlsId";
+     	
+     	// execute the query
      	ResultSet rs = stmt.executeQuery(qry);
 
-  		// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("MLS Name\t\tPrice\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress");
 		printLine();
   		while (rs.next()) {
@@ -544,7 +670,11 @@ public class RegularUser extends User{
   		rs.close();
    	}
    
-   	// This method is for the query for all listings with a price greater or lower than the users input.
+   	/**
+   	 * InputPriceQuery is a method that allows users to query the databse 
+   	 * by a price that is greater or lower/equal to the user's desired price range
+   	 * @throws SQLException
+   	 */
    	private void InputPriceQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
@@ -552,9 +682,9 @@ public class RegularUser extends User{
    		String qry = null;
    		int price = 0; 
    		
+   		// loop until the user enters a valid price point
    		boolean valid = false;
    		while (!valid) {
-   			
    	   		System.out.print("Please enter the price: ");
 	   		try {
 	   			price = Integer.parseInt(scanner.nextLine());
@@ -564,6 +694,7 @@ public class RegularUser extends User{
 	   		}
    		}
    		
+   		// loop until the user chooses whether they want to search for greater than or less/equal to
    		valid = false;
    		int choice = 0;
    		while (!valid) {
@@ -580,6 +711,7 @@ public class RegularUser extends User{
    			}
    		}
    		
+   		// build the query string
    		if (choice == 1) {
    			qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress "
                   + "from MLS m, LISTING l, ADDRESS a, TYPE t "
@@ -594,9 +726,12 @@ public class RegularUser extends User{
                   + " and l.MlsId = m.MlsId";
    		}
       
+   		// execute the query
    		ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
 		System.out.println("MLS Name\t\tPrice\t\tCity\t\t\tState\t\t\tCountry\t\t\tAddress");
 		printLine();
 		while (rs.next()) {
@@ -667,20 +802,32 @@ public class RegularUser extends User{
    	}*/
    
    	// This method is for the query for all listings with a particular number of bathrooms.
+   	/**
+   	 * InputCompanyQuery 
+   	 * @throws SQLException
+   	 */
    	public void InputCompanyQuery() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
-
+   		
+		/* * * * * * * * * * * * * * * * * * *
+		 * User Interaction / Get user input *
+		 * * * * * * * * * * * * * * * * * * */
    		System.out.println("\n-----------------------------------------"
    							+ "Search By MLS Company" 
    							+ "-----------------------------------------\n");
+   		
+   		// call on a helper method get the mlsCompany value
    		int mlsCompany = getMlsId();
 
+   		// build the query string
    		String qry = "select distinct m.MlsName, l.ListPrice, a.Country, a.StateOrProvince, a.City, a.FullStreetAddress \n"
                    	 + " from MLS m, LISTING l, ADDRESS a, TYPE t "
                    	 + " where m.MLSID = " + mlsCompany
                    	 + " and l.AddressId = a.AddressId "
                    	 + " and l.MlsId = m.MlsId";
+   		
+   		// execute the query 
    		ResultSet rs = stmt.executeQuery(qry);
 
 		// Loop through the result set
@@ -696,18 +843,31 @@ public class RegularUser extends User{
 		  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsName, price, country, state, city, address);
 		}
     	System.out.println( );
+    	
+    	// close resources
     	rs.close();
 	}
    	
+   	/**
+   	 * getMlsId is a method that displays MLS companies to the user and allows them to choose
+   	 * the company they would like to see listings for
+   	 * @return MlsId which is an int that is the primary key for the MLS company
+   	 * @throws SQLException
+   	 */
    	private int getMlsId() throws SQLException {
    		
    		Statement stmt = conn.createStatement();
    		
+   		// generate the query string
    		String qry = "Select * from MLS";
+   		
+   		// execute the query
    		ResultSet rs = stmt.executeQuery(qry);
 	   	   
+   		// store the keys into the database
    		ArrayList<Integer> MlsId = new ArrayList<Integer>();
    		
+   		// display the companies to the user
    		System.out.print("MLS Companies\n------------------");
    		int i = 0;
    		while (rs.next()) {
@@ -715,6 +875,7 @@ public class RegularUser extends User{
    			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("MLSNAME"));
    		}
 	   
+   		// loop until the user selects a valid option
    		int choice = 0;
    		boolean valid = false;
    		while (!valid) {
@@ -731,9 +892,14 @@ public class RegularUser extends User{
 	   		}
    		}
    		
+   		// return the primary key of the MLS company
    		return MlsId.get(choice - 1);
    	}
    	
+   	/**
+   	 * printRegularUserMode is called by printAndExecute whenever 
+   	 * the user restarts a query
+   	 */
    	private static final void printRegularUserMode() {
    		System.out.println("-----------------------------------------" 
    							+ "Regular User mode" 
