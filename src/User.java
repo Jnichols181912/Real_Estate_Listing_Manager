@@ -128,7 +128,7 @@ public class User {
 			Driver d = new EmbeddedDriver();
 			
 			// location of the DB
-			String url = "jdbc:derby:/home/allen/Dropbox/EclipseWorkspace/workspace/RealEstateListingManager/RealEstateDb";
+			String url = "jdbc:derby:C:\\Users\\xinga\\Documents\\GitHub\\Real_Estate_Listing_Manager\\RealEstateDb";
 			
 			// establish a connection to the DB
 			conn = d.connect(url, null);

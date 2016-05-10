@@ -320,7 +320,7 @@ public class AdminUser extends User {
 			int price = rs.getInt("ListPrice");
 			String description = rs.getString("ListingDescription");
 			String url = rs.getString("ListURL");
-			String date = rs.getString("ListDate");
+			String date = rs.getString("ListingDate");
 			int bedrooms = rs.getInt("Bedrooms");
 			int bathrooms = rs.getInt("Bathrooms");
 			System.out.printf("%-8d\t%-15d\t%-50s\t%-4d\t%-4d\t%-20s\t%-100s\n", listingId, price, url, bedrooms, bathrooms, date, description);
@@ -507,12 +507,11 @@ public class AdminUser extends User {
 		Statement stmt = conn.createStatement();
 		
      	String qry = "insert into ADDRESS(FullStreetAddress, City, StateOrProvince, PostalCode, Country) \n"
-     				 + "values ('" + address + "', '" + city + "', '" + state + "', '" + country + "', "
-     				 + postalCode + ")";
+     				 + "values ('" + address + "', '" + city + "', '" + state + "', " + postalCode + ", '"
+     				 + country + "')";
      	
-     	ResultSet rs = stmt.executeQuery(qry);
-     	
-     	rs.close();
+     	boolean finished = stmt.execute(qry);
+     
 	}
 	
 	/**
@@ -611,13 +610,12 @@ public class AdminUser extends User {
      	
      	rs.close();
 	}
-	
-	 public static int getType() throws SQLException {}
-	 public static int getStatus(){}
-	 public static int getCategory(){}
-	 public static int getMls()
 
-	}
+	 public static int getType() throws SQLException {return 0;}
+	 public static int getStatus() throws SQLException{return 0;}
+	 public static int getCategory() throws SQLException{return 0;}
+	 public static int getMls() throws SQLException {return 0;}
+	 
 	 public static int getAddress(){
 	   		Statement stmt = conn.createStatement();
 	   		
