@@ -174,8 +174,8 @@ public class User {
 							+ "-------------------"
 							+ "-------------------"
 							+ "-------------------"
-			                                + "-------------------"
-                                                        + "-------------------"
+			                + "-------------------"
+                            + "-------------------"
 							+ "-------------------");
 	}
 	
@@ -187,4 +187,15 @@ public class User {
 	    System.out.print(ANSI_CLS + ANSI_HOME);  
 	    System.out.flush();  
 	}
+	
+   	/**
+   	 * printHeader is a helper method that takes the mode as input string and outputs to console in a 
+   	 * friendly manner
+   	 * @param string which is the string of the header you would like to print
+   	 */
+   	protected static final void printHeader(String string) {
+   		System.out.println("-----------------------------------------" 
+   							+ string
+   							+"-----------------------------------------");	
+   	}
 }

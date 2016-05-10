@@ -2,17 +2,17 @@ import java.sql.*;
 //import org.apache.derby.jdbc.ClientDriver;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import java.util.Scanner;
-/**
- * 
- */
 
 /**
- * @author allen
- *
+ * AdminUser 
+ * @author Allen Bui(x339y958), John Nichols ()
+ * @version 1
  */
+public class AdminUser extends User {
 
-public class AdminUser extends User{
-
+	private static String adminMode = "Administrator Mode";
+	private static String insertRecord = "Inserting Record";
+	
 	public AdminUser() {
 		super();
 	}
@@ -24,7 +24,7 @@ public class AdminUser extends User{
 		boolean validChoice = false;
 		
 		clearConsole();
-		printAdminMode();
+		printHeader(adminMode);
 		
 		while (!validChoice) {
 			System.out.println("Choose from one of the following options:"
@@ -40,13 +40,13 @@ public class AdminUser extends User{
 				validChoice = true;
 			} catch (NumberFormatException nfe) {
 				clearConsole();
-				printAdminMode();
+				printHeader(adminMode);
 				System.out.println("\nYour input needs to be an integer in range [1,4]\n");
 			}
 		}
 		
 		clearConsole();
-		printAdminMode();
+		printHeader(adminMode);
 		
 		switch (choice) {
 		
@@ -69,7 +69,15 @@ public class AdminUser extends User{
 		
 	}
 	
-	void insertRecord() {
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void insertRecord() throws SQLException {
+		
+		clearConsole();
+		printHeader(adminMode);
+		printHeader(insertRecord);
 		
 		int choice = 0;
 		boolean validChoice = false;
@@ -91,6 +99,8 @@ public class AdminUser extends User{
 				validChoice = true;
 			} catch (NumberFormatException nfe) {
 				clearConsole();
+				printHeader(adminMode);
+				printHeader(insertRecord);
 				System.out.println("Your input needs to be an integer in range [1,7]");
 			}
 		}
@@ -131,7 +141,7 @@ public class AdminUser extends User{
 		}
 	}
 	
-	void updateRecord() {
+	void updateRecord() throws SQLException {
 		
 		int choice = 0;
 		boolean validChoice = false;
@@ -193,7 +203,7 @@ public class AdminUser extends User{
 		}
 	}
 	
-	void deleteRecord() {
+	void deleteRecord() throws SQLException {
 		
 		int choice = 0;
 		boolean validChoice = false;
@@ -255,14 +265,27 @@ public class AdminUser extends User{
 		}
 	}
 	
-	void showAllAddresses() {
+	/**
+	 * SHOW ALL ADDRESSES DONE!
+	 */
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void showAllAddresses() throws SQLException {
+
 		Statement stmt = conn.createStatement();
+		
+		// build the query string
      	String qry = "select * from ADDRESS";
+     	
+     	// execute the query
      	ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
-     	// AddressId, FullStreetAddress, City, StateOrProvince, PostalCode, Country
-     	System.out.println("Address Id\t\tAddress\t\tCity\t\t\tState or Province\t\t\tCountry\t\t\tPostal code");
+		/* * * * * * * * * * * * *
+		 * Print resulting query *
+		 * * * * * * * * * * * * */
+     	System.out.println("Address Id\tCity\t\t\tState or Province\tCountry\t\t\tPostal Code\tAddress");
      	printLine();
      	
 		while (rs.next()) {
@@ -271,14 +294,21 @@ public class AdminUser extends User{
 			String city = rs.getString("City");
 			String state = rs.getString("StateOrProvince");
 			String country = rs.getString("Country");
-			String postalCode = rs.getString("PostalCode");
-	  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", addressId, address, city, state, country, postalCode);
+			int postalCode = rs.getInt("PostalCode");
+			System.out.printf("%-8d\t%-20s\t%-20s\t%-20s\t%-10d\t%-100s\n", addressId, city, state, country, postalCode, address);
 		}
-		System.out.println( );
+		
+		System.out.println();
+		
+		// close the resource
 		rs.close();
 	}
 	
-	void showAllListings() {
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void showAllListings() throws SQLException {
 		Statement stmt = conn.createStatement();
      	String qry = "select * from LISTING";
      	ResultSet rs = stmt.executeQuery(qry);
@@ -295,13 +325,18 @@ public class AdminUser extends User{
 			String date = rs.getString("ListingDate");
 			int bedrooms = rs.getInt("Bedrooms");
 			int bathrooms = rs.getInt("Bathrooms");
-	  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", listingId, price, url, bedrooms, bathrooms);
+			System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", listingId, price, url, bedrooms, bathrooms);
 		}
+		
 		System.out.println( );
 		rs.close();
 	}
 	
-	void showAllCompanies() {
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void showAllCompanies() throws SQLException {
 		Statement stmt = conn.createStatement();
      	String qry = "select * from MLS";
      	ResultSet rs = stmt.executeQuery(qry);
@@ -324,13 +359,17 @@ public class AdminUser extends User{
 		rs.close();
 	}
 	
-	void showAllPhotos() {
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void showAllPhotos() throws SQLException {
 		Statement stmt = conn.createStatement();
      	String qry = "select * from PHOTO";
      	ResultSet rs = stmt.executeQuery(qry);
 
 		// Loop through the result set
-     	// MediaModificationTimestamp, MediaUrl, “ListingId”
+     	// MediaModificationTimestamp, MediaUrl, ï¿½ListingIdï¿½
      	System.out.println("Timestamp\t\tURL\t\tListing Id");
      	printLine();
      	
@@ -344,7 +383,11 @@ public class AdminUser extends User{
 		rs.close();
 	}
 	
-	void showAllCategories() {
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void showAllCategories() throws SQLException {
 		Statement stmt = conn.createStatement();
      	String qry = "select * from CATEGORY";
      	ResultSet rs = stmt.executeQuery(qry);
@@ -363,7 +406,11 @@ public class AdminUser extends User{
 		rs.close();
 	}
 	
-	void showAllTypes() {
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void showAllTypes() throws SQLException {
 		Statement stmt = conn.createStatement();
      	String qry = "select * from TYPE";
      	ResultSet rs = stmt.executeQuery(qry);
@@ -382,7 +429,11 @@ public class AdminUser extends User{
 		rs.close();
 	}
 	
-	void showAllStatuses() {
+	/**
+	 * 
+	 * @throws SQLException
+	 */
+	void showAllStatuses() throws SQLException {
 		Statement stmt = conn.createStatement();
      	String qry = "select * from STATUS";
      	ResultSet rs = stmt.executeQuery(qry);
@@ -401,88 +452,90 @@ public class AdminUser extends User{
 		rs.close();
 	}
 	
-	void insertAddress() {
+	/**
+	 * 
+	 */
+	void insertAddress() throws SQLException {
 		//FullStreetAddress, City, StateOrProvince, PostalCode, Country
 		
-		boolean stop = false;
+		boolean done = false;
 		String choice;
 		String address;
 		String city;
 		String state;
 		String country;
-		int postalCode;
+		choice = address = city = state = country = null;
 		
-		while (!stop) {
+		int postalCode = 0;
+		
+		while (!done) {
 			System.out.print("Please enter the address: ");
 			address = scanner.nextLine();
+			
 			System.out.print("Please enter the city: ");
 			city = scanner.nextLine();
+			
 			System.out.print("Please enter the state: ");
 			state = scanner.nextLine();
+			
 			System.out.print("Please enter the country: ");
 			country = scanner.nextLine();
+			
 			System.out.print("Please enter the postal code: ");
-			postalCode = Integer.parseInt(scanner.nextLine());
+			boolean valid = false;
+			while (!valid) {
+				try {
+					postalCode = Integer.parseInt(scanner.nextLine());
+					valid = true;
+				} catch (NumberFormatException nfe) {
+					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
+				}
+			}
+			
 			printLine();
 			System.out.println("Address:\t" + address +
 							   "City:\t" + city + 
 							   "State:\t" + state +
 							   "Country:\t" + country +
 							   "Postal Code: \t" + postalCode);
-			System.out.print("Is this the correct information(y or n): ");
+			System.out.print("Is this the correct information? (y/n) ");
 			choice = scanner.nextLine();
-			choice = choice.toUpperCase();
-			if(choice == "Y" || choice == "YES") {
-				stop = true;
+			
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+				done = true;
 			}
 		}
+				
+		Statement stmt = conn.createStatement();
 		
-		conn = null;
-		
-		try {
-			// Step 1:  connect to database server
-			//Driver d = new ClientDriver();
-			
-			Driver d = new EmbeddedDriver();
-			String url = "jdbc:derby:/home/allen/Dropbox/EclipseWorkspace/workspace/RealEstateListingManager/RealEstateDb";
-			conn = d.connect(url, null);
-			if (conn == null) {
-				System.out.println("\nError establishing connection to DB");
-				throw new SQLException();
-			}
-			
-			Statement stmt = conn.createStatement();
-	     	String qry = "insert into ADDRESS(FullStreetAddress, City, StateOrProvince, PostalCode, Country) "
-	     				 + "values (`" + address + "`, `" + city + "`, `" + state + "`, `" + country + "`, "
-	     				 + postalCode +")";
-	     	ResultSet rs = stmt.executeQuery(qry);
-	     	rs.close();
-			
-		} catch(SQLException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		} finally {
-			// Step 4: Disconnect from the server
-			try {
-				if(conn != null)
-					conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-		}
+     	String qry = "insert into ADDRESS(FullStreetAddress, City, StateOrProvince, PostalCode, Country) "
+     				 + "values ('" + address + "', '" + city + "', '" + state + "', '" + country + "', "
+     				 + postalCode + ");";
+     	
+     	ResultSet rs = stmt.executeQuery(qry);
+     	
+     	rs.close();
 	}
 	
+	/**
+	 * 
+	 */
 	void updateAddress() {
 		//FullStreetAddress, City, StateOrProvince, PostalCode, Country
 	}
 	
+	/**
+	 * 
+	 */
 	void deleteAddress() {
 		//FullStreetAddress, City, StateOrProvince, PostalCode, Country
 	}
 	
+	/**
+	 * 
+	 */
 	void insertListing() {
-		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, “TypeId”, ”StatusId”, “CategoryId”, “MlsId”, “AddressId”
+	/*	// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, ï¿½TypeIdï¿½, ï¿½StatusIdï¿½, ï¿½CategoryIdï¿½, ï¿½MlsIdï¿½, ï¿½AddressIdï¿½
 		boolean stop = false;
 		String choice;
 		int price;
@@ -571,41 +624,52 @@ public class AdminUser extends User{
 				e.printStackTrace();
 				System.exit(-1);
 			}
-		}
+		}*/
 	}
 	
+	/**
+	 * 
+	 */
 	void updateListing() {
-		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, “TypeId”, ”StatusId”, “CategoryId”, “MlsId”, “AddressId”
+		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, ï¿½TypeIdï¿½, ï¿½StatusIdï¿½, ï¿½CategoryIdï¿½, ï¿½MlsIdï¿½, ï¿½AddressIdï¿½
 
 	}
 	
+	/**
+	 * 
+	 */
 	void deleteListing() {
-		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, “TypeId”, ”StatusId”, “CategoryId”, “MlsId”, “AddressId”
+		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, ï¿½TypeIdï¿½, ï¿½StatusIdï¿½, ï¿½CategoryIdï¿½, ï¿½MlsIdï¿½, ï¿½AddressIdï¿½
 
 	}
 	
+	/**
+	 * 
+	 */
 	void insertMls() {
-		//MlsId, MlsName, MlsAgent, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
+	/*	//MlsId, MlsName, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
 		
 		boolean stop = false;
 		String name;
-		String agent;
 		String address;
 		String email;
 		String phoneNumber;
 		String fax;
+		name = address = email = phoneNumber = fax = null;
 		
 		while (!stop) {
+			System.out.print("Please enter the name of the MLS company: ");
+			name = scanner.nextLine();
+
 			System.out.print("Please enter the address: ");
 			address = scanner.nextLine();
-			System.out.print("Please enter the city: ");
-			city = scanner.nextLine();
-			System.out.print("Please enter the state: ");
-			state = scanner.nextLine();
-			System.out.print("Please enter the country: ");
-			country = scanner.nextLine();
+			
+			System.out.print("Please enter the email: ");
+			email = scanner.nextLine();
+			
 			System.out.print("Please enter the postal code: ");
-			postalCode = Integer.parseInt(scanner.nextLine());
+			phoneNumber = scanner.nextLine();
+			
 			printLine();
 			System.out.println("Address:\t" + address +
 							   "City:\t" + city + 
@@ -653,7 +717,7 @@ public class AdminUser extends User{
 				e.printStackTrace();
 				System.exit(-1);
 			}
-		}
+		}*/
 	}
 	
 	void updateMls() {
@@ -667,16 +731,16 @@ public class AdminUser extends User{
 	}
 	
 	void insertPhoto() {
-		//MediaModificationTimestamp, MediaUrl, “ListingId”
+		//MediaModificationTimestamp, MediaUrl, ï¿½ListingIdï¿½
 	}
 	
 	void updatePhoto() {
-		//MediaModificationTimestamp, MediaUrl, “ListingId”
+		//MediaModificationTimestamp, MediaUrl, ï¿½ListingIdï¿½
 
 	}
 	
 	void deletePhoto() {
-		//MediaModificationTimestamp, MediaUrl, “ListingId”
+		//MediaModificationTimestamp, MediaUrl, ï¿½ListingIdï¿½
 
 	}
 	void insertCategory() {
@@ -720,10 +784,4 @@ public class AdminUser extends User{
 		//StatusId, ListingStatus
 
 	}
-
-   	private static final void printAdminMode() {
-   		System.out.println("-----------------------------------------" 
-   							+ "Administrator mode"
-   							+"-----------------------------------------");	
-   	}
 }
