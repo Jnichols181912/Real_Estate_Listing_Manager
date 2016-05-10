@@ -1,82 +1,54 @@
 CREATE TABLE CATEGORY (
-    CATEGORYID INT NOT NULL,
-    CATEGORYNAME VARCHAR(100),
-
-    PRIMARY KEY (CATEGORYID)
+    CategoryId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    CategoryName VARCHAR(100)
 );
 
 CREATE TABLE STATUS (
-    STATUSID INT NOT NULL,
-    LISTINGSTATUS VARCHAR(100),
-
-    PRIMARY KEY (STATUSID)
+    StatusId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    ListingStatus VARCHAR(100)
 );
 
 CREATE TABLE TYPE (
-    TYPEID INT NOT NULL,
-    PROPERTYTYPE VARCHAR(100) NOT NULL,
-
-    PRIMARY KEY (TYPEID)
+    TypeId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    PropertyType VARCHAR(100) NOT NULL
 );
 
 CREATE TABLE ADDRESS (
-    ADDRESSID INT NOT NULL,
-    FULLSTREETADDRESS VARCHAR(100) NOT NULL,
-    CITY VARCHAR(50),
-    STATEORPROVINCE VARCHAR(50),
-    POSTALCODE INT NOT NULL,
-    COUNTRY VARCHAR(50) NOT NULL,
-
-    PRIMARY KEY (ADDRESSID)
+    AddressId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    FullStreetAddress VARCHAR(100) NOT NULL,
+    City VARCHAR(50),
+    StateOrProvince VARCHAR(50),
+    PostalCode INT NOT NULL,
+    Country VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE MLS (
-    MLSID INT NOT NULL,
-    MLSNAME VARCHAR(100) NOT NULL,
-    MLSADDRESS VARCHAR(100),
-    MLSEMAIL VARCHAR(50),
-    MLSPHONENUMBER VARCHAR(50),
-    MLSFAX VARCHAR(50),
-
-    PRIMARY KEY (MLSID)
+    MlsId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    MlsName VARCHAR(100) NOT NULL,
+    MlsAddress VARCHAR(100),
+    MlsEmail VARCHAR(50),
+    MlsPhoneNumber VARCHAR(50),
+    MlsFax VARCHAR(50)
 );
 
 CREATE TABLE PHOTO (
-    PHOTOID INT NOT NULL,
-    MEDIAMODIFICATIONTIMESTAMP VARCHAR(100),
-    MEDIAURL VARCHAR(100) NOT NULL,
-    LISTINGID INT NOT NULL,
-
-    PRIMARY KEY (PHOTOID)
+    PhotoId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    MediaModificationTimestamp DATE NOT NULL,
+    MediaURL VARCHAR(100) NOT NULL,
+    ListingId int not null references LISTING on delete set null
 );
-	
-ALTER TABLE PHOTO
-ADD FOREIGN KEY (LISTINGID)
-REFERENCES LISTING;
 
 create table LISTING (
-    ListingId int not null,
-    ListURL varchar(100) not null,
+    ListingId int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    ListURL varchar(100) NOT NULL,
     ListingDescription varchar(100),
-    ListDate VARCHAR(15),
-	 ListPrice int,
+    ListingDate DATE NOT NULL,
+	ListPrice int NOT NULL,
     Bedrooms int,
     Bathrooms int,
-    TypeId int,
-    StatusId int,
-    CategoryId int,
-    MlsId int,
-    AddressId int,
-
-    primary key (ListingId),
-    foreign key (TypeId) references TYPE
-        on delete set null,
-    foreign key (AddressId) references ADDRESS
-        on delete set null,
-    foreign key (StatusId) references STATUS
-        on delete set null,
-    foreign key (CategoryId) references CATEGORY
-        on delete set null,
-    foreign key (MlsId) references MLS
-        on delete set null
+    TypeId int references TYPE on delete set null,
+    StatusId int references STATUS on delete set null,
+    CategoryId int references CATEGORY on delete set null,
+    MlsId int references MLS on delete set null,
+    AddressId int references ADDRESS on delete set null
 );
