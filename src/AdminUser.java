@@ -1,7 +1,5 @@
 import java.sql.*;
-//import org.apache.derby.jdbc.ClientDriver;
-import org.apache.derby.jdbc.EmbeddedDriver;
-import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * AdminUser 
@@ -313,21 +311,21 @@ public class AdminUser extends User {
      	String qry = "select * from LISTING";
      	ResultSet rs = stmt.executeQuery(qry);
 
-		// Loop through the result set
-     	//ListingId, ListPrice, ListURL, ListingDate, Bedrooms, Bathrooms
-     	System.out.println("Listing Id\t\tPrice\t\tURL\t\t\tDate Listed\t\t\tBedrooms\t\t\tBathrooms");
+	
+     	System.out.println("Listing Id\t\tPrice\t\tURL\t\t\tDate Listed\t\t\tBedrooms\t\t\tBathrooms");			// FIX THIS ONE
      	printLine();
      	
 		while (rs.next()) {
 			int listingId = rs.getInt("ListingId");
 			int price = rs.getInt("ListPrice");
-			String url = rs.getString("ListingURL");
-			String date = rs.getString("ListingDate");
+			String description = rs.getString("ListingDescription");
+			String url = rs.getString("ListURL");
+			String date = rs.getString("ListDate");
 			int bedrooms = rs.getInt("Bedrooms");
 			int bathrooms = rs.getInt("Bathrooms");
-			System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", listingId, price, url, bedrooms, bathrooms);
+			System.out.printf("%-8d\t%-15d\t%-50s\t%-4d\t%-4d\t%-20s\t%-100s\n", listingId, price, url, bedrooms, bathrooms, date, description);
 		}
-		
+
 		System.out.println( );
 		rs.close();
 	}
@@ -508,9 +506,9 @@ public class AdminUser extends User {
 				
 		Statement stmt = conn.createStatement();
 		
-     	String qry = "insert into ADDRESS(FullStreetAddress, City, StateOrProvince, PostalCode, Country) "
+     	String qry = "insert into ADDRESS(FullStreetAddress, City, StateOrProvince, PostalCode, Country) \n"
      				 + "values ('" + address + "', '" + city + "', '" + state + "', '" + country + "', "
-     				 + postalCode + ");";
+     				 + postalCode + ")";
      	
      	ResultSet rs = stmt.executeQuery(qry);
      	
@@ -534,98 +532,133 @@ public class AdminUser extends User {
 	/**
 	 * 
 	 */
-	void insertListing() {
-	/*	// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, �TypeId�, �StatusId�, �CategoryId�, �MlsId�, �AddressId�
-		boolean stop = false;
+	void insertListing() throws SQLException {
+		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, �TypeId�, �StatusId�, �CategoryId�, �MlsId�, �AddressId�
+		boolean valid = false, stop = false;
+		
 		String choice;
-		int price;
-		String URL;
+		String url;
 		String description;
-		int bedrooms;
-		int bathrooms;
-		int type;
-		int status;
-		int category;
-		int mls;
-		int address;
+		
+		choice = url = description = null;
+		
+		int bedrooms, bathrooms, type, status, category, mls, address, price;
+		bedrooms = bathrooms = type = status = category = mls = address = price = 0;
 		
 		while (!stop) {
 			System.out.print("Please enter the price: ");
 			price = Integer.parseInt(scanner.nextLine());
+			
 			System.out.print("Please enter the URL: ");
-			URL = scanner.nextLine();
-			System.out.print("Please enter the desctiption: ");
+			url = scanner.nextLine();
+			
+			System.out.print("Please enter a brief, one line description: ");
 			description = scanner.nextLine();
+			
 			System.out.print("Please enter the bedrooms: ");
-			bedrooms = Integer.parseInt(scanner.nextLine());
+			valid = false;
+			while (!valid) {
+				try {
+					bedrooms = Integer.parseInt(scanner.nextLine());
+					valid = true;
+				} catch (NumberFormatException nfe) {
+					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
+				}
+			}
+			
 			System.out.print("Please enter the bathrooms: ");
-			bathrooms = Integer.parseInt(scanner.nextLine());
-			System.out.print("Please enter the type id: ");
-			type = Integer.parseInt(scanner.nextLine());
-			System.out.print("Please enter the status id: ");
-			status = Integer.parseInt(scanner.nextLine());
-			System.out.print("Please enter the category id: ");
-			category = Integer.parseInt(scanner.nextLine());
-			System.out.print("Please enter the mls id: ");
-			mls = Integer.parseInt(scanner.nextLine());
-			System.out.print("Please enter the address id: ");
-			address = Integer.parseInt(scanner.nextLine());
+			valid = false;
+			while (!valid) {
+				try {
+					bathrooms = Integer.parseInt(scanner.nextLine());
+					valid = true;
+				} catch (NumberFormatException nfe) {
+					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
+				}
+			}
+			
+			type = getType();
+			status = getStatus();
+			category = getCategory();
+			mls = getMls();
+			address = getAddress();
+			
 			printLine();
-			System.out.println("Price:\t" + price +
-							   "URL:\t" + URL + 
-							   "Description:\t" + description +
-							   "Bedrooms:\t" + bedrooms +
-							   "Bathrooms: \t" + bathrooms + 
-							   "Type Id:\t" + type + 
-							   "Status Id:\t" + status + 
-							   "Category Id:\t" + category +
-							   "MLS Id:\t" + mls + 
-							   "Address Id:\t" + address);
+			System.out.println("\nPrice:\t" + price +
+							   "\nURL:\t" + url + 
+							   "\nDescription:\t" + description +
+							   "\nBedrooms:\t" + bedrooms +
+							   "\nBathrooms: \t" + bathrooms + 
+							   "\nType Id:\t" + type + 
+							   "\nStatus Id:\t" + status + 
+							   "\nCategory Id:\t" + category +
+							   "\nMLS Id:\t" + mls + 
+							   "\nAddress Id:\t" + address);
 			System.out.print("Is this the correct information(y or n): ");
 			choice = scanner.nextLine();
-			choice = choice.toUpperCase();
-			if(choice == "Y" || choice == "YES") {
-				stop = true;
-			}
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'q') stop = true;
 		}
 		
 		Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
+
+		Statement stmt = conn.createStatement();
 		
-		conn = null;
-		
-		try {
-			// Step 1:  connect to database server
-			//Driver d = new ClientDriver();
-			
-			Driver d = new EmbeddedDriver();
-			String url = "jdbc:derby:/home/allen/Dropbox/EclipseWorkspace/workspace/RealEstateListingManager/RealEstateDb";
-			conn = d.connect(url, null);
-			if (conn == null) {
-				System.out.println("\nError establishing connection to DB");
-				throw new SQLException();
-			}
-			
-			Statement stmt = conn.createStatement();
-	     	String qry = "insert into ADDRESS(ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, TypeId, StatusId, CategoryId, MlsId, AddressId) "
-	     				 + "values (" + price + ", `" + URL + "`, `" + description + "`, `" + date + "`, "+ bedrooms + ", " + bathrooms + ", " + type + ", " + status + ", "
-	     				 + category + ", " + mls + ", " + ", " + address;
-	     	ResultSet rs = stmt.executeQuery(qry);
-	     	rs.close();
-			
-		} catch(SQLException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		} finally {
-			// Step 4: Disconnect from the server
-			try {
-				if(conn != null)
-					conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
-		}*/
+     	String qry = "insert into ADDRESS(ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, TypeId, StatusId, CategoryId, MlsId, AddressId) "
+     				 + "values (" + price + ", '" + url + "', '" + description + "', '" + date + "', "+ bedrooms + ", " + bathrooms + ", " + type + ", " + status + ", "
+     				 + category + ", " + mls + ", " + ", " + address + ")";
+     	
+     	ResultSet rs = stmt.executeQuery(qry);
+     	
+     	rs.close();
 	}
+	
+	 public static int getType() throws SQLException {}
+	 public static int getStatus(){}
+	 public static int getCategory(){}
+	 public static int getMls()
+
+	}
+	 public static int getAddress(){
+	   		Statement stmt = conn.createStatement();
+	   		
+	   		// generate the query string
+	   		String qry = "Select * from MLS";
+	   		
+	   		// execute the query
+	   		ResultSet rs = stmt.executeQuery(qry);
+		   	   
+	   		// store the keys into the database
+	   		ArrayList<Integer> MlsId = new ArrayList<Integer>();
+	   		
+	   		// display the companies to the user
+	   		System.out.print("MLS Companies\n------------------");
+	   		int i = 0;
+	   		while (rs.next()) {
+	   			MlsId.add(rs.getInt("MlsId"));
+	   			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("MLSNAME"));
+	   		}
+		   
+	   		// loop until the user selects a valid option
+	   		int choice = 0;
+	   		boolean valid = false;
+	   		while (!valid) {
+		   		try {
+		   	   		System.out.print("\n\nPlease choose a MLS Company: ");
+		   			choice = Integer.parseInt(scanner.nextLine());
+		   			
+		   			if(choice <= 0 || choice > (MlsId.size())) {
+		   				throw new NumberFormatException();
+		   			}
+		   			valid = true;
+		   		} catch(NumberFormatException nfe) {
+		   			System.out.println("Your selection was invalid, please try again");
+		   		}
+	   		}
+	   		
+	   		// return the primary key of the MLS company
+	   		return MlsId.get(choice - 1);
+	 }
+	
 	
 	/**
 	 * 
