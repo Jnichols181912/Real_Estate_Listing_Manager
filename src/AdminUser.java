@@ -341,17 +341,17 @@ public class AdminUser extends User {
 
 		// Loop through the result set
      	// MlsId, MlsName, MlsAgent, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
-     	System.out.println("MLS Id\t\tName\t\tAgent\t\t\tAddress\t\t\tEmail\t\t\tPhone Number\t\tFax");
+     	System.out.println("MLS Id\t\tName\t\t\tAddress\t\t\t\t\t\tEmail\t\t\tPhone Number\t\tFax");
      	printLine();
      	
 		while (rs.next()) {
 			int mlsId = rs.getInt("MlsId");
 			String name = rs.getString("MlsName");
 			String address = rs.getString("MlsAddress");
-			String email = rs.getString("ListingDate");
-			String phoneNumber = rs.getString("Bedrooms");
-			String fax = rs.getString("Bathrooms");
-	  	System.out.printf("%-20s\t%-15d\t%-20s\t%-20s\t%-20s\t%-100s\n", mlsId, name, address, email, phoneNumber, fax);
+			String email = rs.getString("MlsEmail");
+			String phoneNumber = rs.getString("MlsPhoneNumber");
+			String fax = rs.getString("MlsFax");
+	  	System.out.printf("%-8d\t%-20s\t%-40s\t%-20s\t%-20s\t%-30s\n", mlsId, name, address, email, phoneNumber, fax);
 		}
 		System.out.println( );
 		rs.close();
@@ -367,15 +367,15 @@ public class AdminUser extends User {
      	ResultSet rs = stmt.executeQuery(qry);
 
 		// Loop through the result set
-     	// MediaModificationTimestamp, MediaUrl, �ListingId�
-     	System.out.println("Timestamp\t\tURL\t\tListing Id");
+     	// MediaModificationTimestamp, MediaUrl, ListingId
+     	System.out.println("Timestamp\t\tURL\t\t\tListing Id");
      	printLine();
      	
 		while (rs.next()) {
 			String timestamp = rs.getString("MediaModificationTimestamp");
 			String url = rs.getString("MediaUrl");
 			int listingId = rs.getInt("ListingId");
-	  	System.out.printf("%-20s\t%-15d\t%-20s", timestamp, url, listingId);
+	  	System.out.printf("%-20s\t%-15s\t%-20s\n", timestamp, url, listingId);
 		}
 		System.out.println( );
 		rs.close();
@@ -398,7 +398,7 @@ public class AdminUser extends User {
 		while (rs.next()) {
 			int categoryId = rs.getInt("CategoryId");
 			String name = rs.getString("CategoryName");
-			System.out.printf("%-20s\t%-15d", categoryId, name);
+			System.out.printf("%-20d\t%-15s\n", categoryId, name);
 		}
 		System.out.println( );
 		rs.close();
@@ -421,7 +421,7 @@ public class AdminUser extends User {
 		while (rs.next()) {
 			int typeId = rs.getInt("TypeId");
 			String type = rs.getString("PropertyType");
-			System.out.printf("%-20s\t%-15d", typeId, type);;
+			System.out.printf("%-20d\t%-15s\n", typeId, type);;
 		}
 		System.out.println( );
 		rs.close();
@@ -444,7 +444,7 @@ public class AdminUser extends User {
      	while (rs.next()) {
 			int statusId = rs.getInt("StatusId");
 			String status = rs.getString("ListingStatus");
-			System.out.printf("%-20s\t%-15d", statusId, status);;
+			System.out.printf("%-20d\t%-15s\n", statusId, status);;
 		}
 		System.out.println( );
 		rs.close();
@@ -518,13 +518,6 @@ public class AdminUser extends User {
 	 * 
 	 */
 	void updateAddress() {
-		//FullStreetAddress, City, StateOrProvince, PostalCode, Country
-	}
-	
-	/**
-	 * 
-	 */
-	void deleteAddress() {
 		//FullStreetAddress, City, StateOrProvince, PostalCode, Country
 	}
 	
@@ -837,26 +830,18 @@ public class AdminUser extends User {
 	/**
 	 * 
 	 */
-	void deleteListing() {
-		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, �TypeId�, �StatusId�, �CategoryId�, �MlsId�, �AddressId�
-
-	}
-	
-	/**
-	 * 
-	 */
-	void insertMls() {
-	/*	//MlsId, MlsName, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
+	void insertMls() throws SQLException{
+		//MlsId, MlsName, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
 		
-		boolean stop = false;
-		String name;
-		String address;
-		String email;
-		String phoneNumber;
-		String fax;
-		name = address = email = phoneNumber = fax = null;
+		boolean done = false;
+		String choice = null;
+		String name = null;
+		String address = null;
+		String email = null;
+		String phone = null;
+		String fax = null;
 		
-		while (!stop) {
+		while (!done) {
 			System.out.print("Please enter the name of the MLS company: ");
 			name = scanner.nextLine();
 
@@ -866,120 +851,184 @@ public class AdminUser extends User {
 			System.out.print("Please enter the email: ");
 			email = scanner.nextLine();
 			
-			System.out.print("Please enter the postal code: ");
-			phoneNumber = scanner.nextLine();
+			System.out.print("Please enter the phone number: ");
+			phone = scanner.nextLine();
+			
+			System.out.print("Please enter the fax number: ");
+			fax = scanner.nextLine();
 			
 			printLine();
-			System.out.println("Address:\t" + address +
-							   "City:\t" + city + 
-							   "State:\t" + state +
-							   "Country:\t" + country +
-							   "Postal Code: \t" + postalCode);
+			System.out.println("Name:" + name +
+							   "\tAddress: " + address + 
+							   "\tState: " + email +
+							   "\tCountry: " + phone +
+							   "\tPostal Code: " + fax);
 			System.out.print("Is this the correct information(y or n): ");
 			choice = scanner.nextLine();
-			choice = choice.toUpperCase();
-			if(choice == "Y" || choice == "YES") {
-				stop = true;
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+				done = true;
 			}
 		}
-		
-		conn = null;
-		
-		try {
-			// Step 1:  connect to database server
-			//Driver d = new ClientDriver();
-			
-			Driver d = new EmbeddedDriver();
-			String url = "jdbc:derby:/home/allen/Dropbox/EclipseWorkspace/workspace/RealEstateListingManager/RealEstateDb";
-			conn = d.connect(url, null);
-			if (conn == null) {
-				System.out.println("\nError establishing connection to DB");
-				throw new SQLException();
-			}
 			
 			Statement stmt = conn.createStatement();
-	     	String qry = "insert into ADDRESS(FullStreetAddress, City, StateOrProvince, PostalCode, Country) "
-	     				 + "values (`" + address + "`, `" + city + "`, `" + state + "`, `" + country + "`, "
-	     				 + postalCode +")";
-	     	ResultSet rs = stmt.executeQuery(qry);
-	     	rs.close();
-			
-		} catch(SQLException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		} finally {
-			// Step 4: Disconnect from the server
-			try {
-				if(conn != null)
-					conn.close();
-			} catch(SQLException e) {
-				e.printStackTrace();
-				System.exit(-1);
+	     	String qry = "insert into MLS(MlsName, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax) "
+	     				 + "values ('" + name + "', '" + address + "', '" + email + "', '" + phone + "', '"
+	     				 + fax +"')";
+	     	
+	     	boolean inserted = stmt.execute(qry);
+	     	
+	     	if (inserted == true) {
+	     		System.out.println("Successfully added.\n\n");
+	     	}
+	    
+
+	}
+	
+	void updateMls() throws SQLException {
+		//MlsId, MlsName, MlsAgent, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
+
+	}
+	
+	
+	void insertPhoto() throws SQLException{
+		//MediaModificationTimestamp, MediaUrl, ListingId
+		
+		boolean done = false;
+		String choice = null;
+		String URL = null;
+		Timestamp timestamp = new java.sql.Timestamp(new java.util.Date().getTime());;
+		int listingId = 0;
+
+		
+		while (!done) {
+			System.out.print("Please enter the photo URL: ");
+			URL = scanner.nextLine();
+
+			System.out.print("Please enter the listing id: ");
+			boolean valid = false;
+			while (!valid) {
+				try {
+					listingId = Integer.parseInt(scanner.nextLine());
+					valid = true;
+				} catch (NumberFormatException nfe) {
+					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
+				}
 			}
-		}*/
+			
+			printLine();
+			System.out.println("URL:" + URL +
+							   "\tListing Id: " + listingId);
+			System.out.print("Is this the correct information(y or n): ");
+			choice = scanner.nextLine();
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+				done = true;
+			}
+		}
+			
+			Statement stmt = conn.createStatement();
+	     	String qry = "insert into PHOTO(MediaModificationTimestamp, MediaUrl, ListingId) "
+	     				 + "values ('" + timestamp + "', '" + URL + "', " + listingId +")";
+	     	
+	     	boolean inserted = stmt.execute(qry);
 	}
 	
-	void updateMls() {
-		//MlsId, MlsName, MlsAgent, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
+	void updatePhoto() throws SQLException {
+		//MediaModificationTimestamp, MediaUrl, ListingId
 
 	}
 	
-	void deleteMls() {
-		//MlsId, MlsName, MlsAgent, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
-
-	}
-	
-	void insertPhoto() {
-		//MediaModificationTimestamp, MediaUrl, �ListingId�
-	}
-	
-	void updatePhoto() {
-		//MediaModificationTimestamp, MediaUrl, �ListingId�
-
-	}
-	
-	void deletePhoto() {
-		//MediaModificationTimestamp, MediaUrl, �ListingId�
-
-	}
-	void insertCategory() {
+	void insertCategory() throws SQLException {
 		//CategoryId, CategoryName
+		
+		boolean done = false;
+		String choice = null;
+		String category = null;
+
+		while (!done) {
+			System.out.print("Please enter the category: ");
+			category = scanner.nextLine();
+			
+			printLine();
+			System.out.println("Category:" + category);
+			System.out.print("Is this the correct information(y or n): ");
+			choice = scanner.nextLine();
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+				done = true;
+			}
+		}
+			
+			Statement stmt = conn.createStatement();
+	     	String qry = "insert into CATEGORY(CategoryName) "
+	     				 + "values ('" + category + "')";
+	     	
+	     	boolean inserted = stmt.execute(qry);
 	}
 	
-	void updateCategory() {
+	void updateCategory() throws SQLException {
 		//CategoryId, CategoryName
 
 	}
 	
-	void deleteCategory() {
-		//CategoryId, CategoryName
+	void insertType() throws SQLException {
+		//TypeId, PropertyType
+		
+		boolean done = false;
+		String choice = null;
+		String type = null;
+
+		while (!done) {
+			System.out.print("Please enter the type: ");
+			type = scanner.nextLine();
+			
+			printLine();
+			System.out.println("Type:" + type);
+			System.out.print("Is this the correct information(y or n): ");
+			choice = scanner.nextLine();
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+				done = true;
+			}
+		}
+			
+			Statement stmt = conn.createStatement();
+	     	String qry = "insert into TYPE(PropertyType) "
+	     				 + "values ('" + type + "')";
+	     	
+	     	boolean inserted = stmt.execute(qry);
+	}
+	
+	void updateType() throws SQLException {
+		//TypeId, PropertyType
 
 	}
 	
-	void insertType() {
-		//TypeId, PropertyType
-	}
-	
-	void updateType() {
-		//TypeId, PropertyType
-
-	}
-	
-	void deleteType() {
-		//TypeId, PropertyType
-
-	}
-	
-	void insertStatus() {
+	void insertStatus() throws SQLException {
 		//StatusId, ListingStatus
-	}
-	
-	void updateStatus() {
-		//StatusId, ListingStatus
+		
+		boolean done = false;
+		String choice = null;
+		String status = null;
 
+		while (!done) {
+			System.out.print("Please enter the status: ");
+			status = scanner.nextLine();
+			
+			printLine();
+			System.out.println("Status:" + status);
+			System.out.print("Is this the correct information(y or n): ");
+			choice = scanner.nextLine();
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+				done = true;
+			}
+		}
+			
+			Statement stmt = conn.createStatement();
+	     	String qry = "insert into STATUS(ListingStatus) "
+	     				 + "values ('" + status + "')";
+	     	
+	     	boolean inserted = stmt.execute(qry);
 	}
 	
-	void deleteStatus() {
+	void updateStatus() throws SQLException {
 		//StatusId, ListingStatus
 
 	}

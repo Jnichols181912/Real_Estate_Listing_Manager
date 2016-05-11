@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
-Tue May 10 18:15:35 CDT 2016:
-Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0154-9cf4-483e-00000330f668 
+Tue May 10 20:04:11 CDT 2016:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.12.1.1 - (1704137): instance a816c00e-0154-9d57-b2fd-000003357ef0 
 on database directory C:\Users\xinga\Documents\GitHub\Real_Estate_Listing_Manager\RealEstateDb with class loader sun.misc.Launcher$AppClassLoader@73d16e93 
 Loaded from file:/C:/Program%20Files/Java/db-derby-10.12.1.1/lib/derby.jar
 java.vendor=Oracle Corporation
