@@ -1,5 +1,6 @@
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * AdminUser 
@@ -10,6 +11,7 @@ public class AdminUser extends User {
 
 	private static String adminMode = "Administrator Mode";
 	private static String insertRecord = "Inserting Record";
+	private static String updateRecord = "Updating Record";
 	
 	public AdminUser() {
 		super();
@@ -28,13 +30,12 @@ public class AdminUser extends User {
 			System.out.println("Choose from one of the following options:"
 	                           + "\n\t1:  insert record"
 	                           + "\n\t2:  update record"
-	                           + "\n\t3:  delete record"
-	                           + "\n\t4:  regular user mode");
+	                           + "\n\t3:  regular user mode");
 			System.out.print("Your choice ==> ");
 
 			try {
 				choice = Integer.parseInt(scanner.nextLine());
-				if (choice < 1 || choice > 4) throw new NumberFormatException();
+				if (choice < 1 || choice > 3) throw new NumberFormatException();
 				validChoice = true;
 			} catch (NumberFormatException nfe) {
 				clearConsole();
@@ -54,10 +55,7 @@ public class AdminUser extends User {
 	  		case 2: updateRecord();
 	  				break;
 	  				
-	  		case 3: deleteRecord();
-	  				break;
-	  				
-	  		case 4: RegularUser reg = new RegularUser();
+	  		case 3: RegularUser reg = new RegularUser();
 	  				reg.printMenuAndExecute();
 	  				break;
 	  					
@@ -171,7 +169,7 @@ public class AdminUser extends User {
 						updateAddress();
 		 				break;
 			
-			case 2:  	showAllListings();
+			case 2:  	//showAllListings();
 						updateListing();
 						break;
 		 
@@ -194,68 +192,6 @@ public class AdminUser extends User {
 			case 7:		showAllTypes();
 						updateType();
 							break;
-	  					
-	  		default: System.out.println("Error handling ensures that code will never reach here... if somehow this line gets printed our program has some major issues");
-	             	break;
-		
-		}
-	}
-	
-	void deleteRecord() throws SQLException {
-		
-		int choice = 0;
-		boolean validChoice = false;
-		
-		while (!validChoice) {
-			System.out.println("Choose from one of the following options:"
-	                           + "\n\t1:  Delete record from ADDRESS"
-	                           + "\n\t2:  Delete record from LISTING"
-	                           + "\n\t3:  Delete record from MLS"
-	                           + "\n\t4:  Delete record from PHOTO"
-	                           + "\n\t5:  Delete record from CATEGORY"
-	                           + "\n\t6:  Delete record from STATUS"
-	                           + "\n\t7:  Delete record from TYPE");
-			System.out.print("Your choice ==> ");
-			
-			try {
-				choice = Integer.parseInt(scanner.nextLine());
-				if (choice < 1 || choice > 7) throw new NumberFormatException();
-				validChoice = true;
-			} catch (NumberFormatException nfe) {
-				clearConsole();
-				System.out.println("Your input needs to be an integer in range [1,7]");
-			}
-		}
-		
-		switch (choice) {
-		
-			case 1:  	showAllAddresses();
-						deleteAddress();
-		 				break;
-			
-			case 2:  	showAllListings();
-						deleteListing();
-						break;
-		 
-			case 3:  	showAllCompanies();
-						deleteMls();
-						break;
-  	 
-			case 4:  	showAllPhotos();
-						deletePhoto();
-						break;
-			
-			case 5: 	showAllCategories();
-						deleteCategory();
-						break;
-			
-			case 6: 	showAllStatuses();
-						deleteStatus();
-						break;
-			
-			case 7:		showAllTypes();
-						deleteType();
-						break;
 	  					
 	  		default: System.out.println("Error handling ensures that code will never reach here... if somehow this line gets printed our program has some major issues");
 	             	break;
@@ -489,13 +425,14 @@ public class AdminUser extends User {
 					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
 				}
 			}
-			
-			printLine();
-			System.out.println("Address:\t" + address +
-							   "City:\t" + city + 
-							   "State:\t" + state +
-							   "Country:\t" + country +
-							   "Postal Code: \t" + postalCode);
+			clearConsole();
+			printHeader(adminMode);
+			printHeader(insertRecord);
+			System.out.println("\nAddress: " + address +
+							   "\nCity: " + city + 
+							   "\nState: " + state +
+							   "\nCountry: " + country +
+							   "\nPostal Code: " + postalCode);
 			System.out.print("Is this the correct information? (y/n) ");
 			choice = scanner.nextLine();
 			
@@ -510,8 +447,9 @@ public class AdminUser extends User {
      				 + "values ('" + address + "', '" + city + "', '" + state + "', " + postalCode + ", '"
      				 + country + "')";
      	
-     	boolean finished = stmt.execute(qry);
+     	stmt.execute(qry);
      
+     	System.out.println("The address has been inserted");
 	}
 	
 	/**
@@ -789,11 +727,12 @@ public class AdminUser extends User {
 	   		int i = 0;
 	   		while (rs.next()) {
 	   			MlsId.add(rs.getInt("AddressId"));
-	   			System.out.print("\nCity: " + (i + 1) + ") " + rs.getString("City"));
-	   			System.out.print("\nState/Province: " + (i + 1) + ") " + rs.getString("StateOrProvince"));
-	   			System.out.print("\nPostalCode: " + (i + 1) + ") " + rs.getInt("PostalCode"));
-	   			System.out.print("\nCountry: " + (i + 1) + ") " + rs.getString("Country"));
-	   			System.out.print("\nFull Street Address" + (i++ + 1) + ") " + rs.getString("FullStreetAddress"));
+	   			System.out.print("\n" + (i++ + 1) + ")");
+	   			System.out.print("\n\t" + "City: " + rs.getString("City"));
+	   			System.out.print("\n\t" + "State/Province: " + rs.getString("StateOrProvince"));
+	   			System.out.print("\n\t" + "PostalCode: " + rs.getInt("PostalCode"));
+	   			System.out.print("\n\t" + "Country: "  + rs.getString("Country"));
+	   			System.out.print("\n\t" + "Full Street Address" + rs.getString("FullStreetAddress"));
 	   		}
 		   
 	   		// loop until the user selects a valid option
@@ -801,7 +740,7 @@ public class AdminUser extends User {
 	   		boolean valid = false;
 	   		while (!valid) {
 		   		try {
-		   	   		System.out.print("\n\nPlease choose a MLS Company: ");
+		   	   		System.out.print("\n\nPlease choose an address: ");
 		   			choice = Integer.parseInt(scanner.nextLine());
 		   			
 		   			if(choice <= 0 || choice > (MlsId.size())) {
@@ -820,17 +759,482 @@ public class AdminUser extends User {
 	
 	
 	/**
+	 * @throws SQLException 
 	 * 
 	 */
-	void updateListing() {
-		// ListingId, ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, �TypeId�, �StatusId�, �CategoryId�, �MlsId�, �AddressId�
+	void updateListing() throws SQLException {
+		
+		printHeader(updateRecord);
+		ArrayList<String> listingInfo = getListing();
+		
+		int i = 0;
+		System.out.print("\n\t" + "1) Description: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "2) URL: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "3) Price: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "4) Bedrooms: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "5) Bathrooms: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "6) MLS Company: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "7) Category: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "8) Property Type: " + listingInfo.get(i++));
+		System.out.print("\n\t" + "9) Address: " + listingInfo.get(i++));
+		System.out.println("\n\t 10) Status: " + listingInfo.get(i++));
+		
+		int listingId = 0;
+		
+		try {
+			listingId = Integer.parseInt(listingInfo.get(i));
+		} catch(NumberFormatException nfe) {
+			System.out.println("error while updating listing. program will now end");
+			System.exit(-1);
+		}
+		
+		boolean correct = false, done = false;
+		int updateOption = 0;
+		while (!done) {
+			while (!correct) {
+				System.out.println("\n\nPlease insert the field you want to update");
+				try {
+					updateOption = Integer.parseInt(scanner.nextLine());
+					if (updateOption < 1 || updateOption > 11) throw new NumberFormatException();
+					correct = true;
+				} catch (NumberFormatException nfe) {
+					clearConsole();
+					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
+				}
+			}
+		
+			switch (updateOption) {
+				case 1: updateListingDescription(listingId);
+						break;
+				case 2: updateListingUrl(listingId);
+						break;
+				case 3: updateListingPrice(listingId);
+						break;
+				case 4:	updateListingBedrooms(listingId);
+						break;
+				case 5:	updateListingBathrooms(listingId);
+						break;
+				case 6:	updateListingMlsCompany(listingId);
+						break;
+				case 7:	updateListingCategory(listingId);
+						break;
+				case 8:	updateListingPropertyType(listingId);
+						break;
+				case 9:	updateListingAddress(listingId);
+						break;
+				case 10:updateListingStatus(listingId);
+						break;
+			}
+		
+			String choiceString = null;
+			
+			while(choiceString == null || choiceString.trim().isEmpty()) {
+				System.out.println("Would you like to continue updating the same listing? (y/n)");
+				choiceString = scanner.nextLine();
+				if (!choiceString.trim().isEmpty()) { 
+					if (Character.toLowerCase(choiceString.trim().charAt(0)) == 'n') {
+						done = true;
+					} else if (Character.toLowerCase(choiceString.trim().charAt(0)) == 'y') {
+						correct = false;
+						done = false;
+					} else {
+						choiceString = null;
+					}
+				}
+			}
+		}
+	}
+	
+	private static void updateListingDescription(int listingId) throws SQLException {
+		String description = null;
+		while (description == null || description.trim().isEmpty()) {
+			System.out.print("Please enter a decription for the listing: ");
+			description = scanner.nextLine();
+		}
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	"update LISTING \n" +
+   						"SET ListingDescription = '" + description + "' \n" +
+   						"WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+   		return;
+	}
 
+	private static void updateListingUrl(int listingId) throws SQLException {
+		String url = null;
+		while (url == null || url.trim().isEmpty()) {
+			System.out.print("Please enter a url for the listing: ");
+			url = scanner.nextLine();
+		}
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET LISTURL = '" + url + "' \n" + 
+   						" WHERE listingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+
+	private static void updateListingPrice(int listingId) throws SQLException {
+		String price = null;
+		int priceInt = 0;
+		while (price == null || price.trim().isEmpty()) {
+			System.out.print("Please enter a new list price: ");
+			price = scanner.nextLine();
+			try {
+				priceInt = Integer.parseInt(price);
+			} catch(NumberFormatException nfe) {
+				price = null;
+			}
+		}
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET ListPrice = " + priceInt + " \n" +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+	
+	private static void updateListingBathrooms(int listingId) throws SQLException {
+		String bathrooms = null;
+		int bathroomsInt = 0;
+		while (bathrooms == null || bathrooms.trim().isEmpty()) {
+			System.out.print("Please enter a new list price: ");
+			bathrooms = scanner.nextLine();
+			try {
+				bathroomsInt = Integer.parseInt(bathrooms);
+			} catch(NumberFormatException nfe) {
+				bathrooms = null;
+			}
+		}
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET BATHROOMS = " + bathroomsInt + " \n" +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+	
+	private static void updateListingBedrooms(int listingId) throws SQLException {
+		String bedrooms = null;
+		int bedroomsInt = 0;
+		while (bedrooms == null || bedrooms.trim().isEmpty()) {
+			System.out.print("Please enter a new list price: ");
+			bedrooms = scanner.nextLine();
+			try {
+				bedroomsInt = Integer.parseInt(bedrooms);
+			} catch(NumberFormatException nfe) {
+				bedrooms = null;
+			}
+		}
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET BEDROOMS = " + bedroomsInt + " \n" +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+	
+	private static void updateListingMlsCompany(int listingId) throws SQLException {
+		
+		int mlsCompanyId = getMls();
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET MLSID = " + mlsCompanyId + " \n" +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+	
+	private static void updateListingCategory(int listingId) throws SQLException {
+		
+		int categoryId = getCategory();
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET CATEGORYID = " + categoryId + " \n" +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+	
+	private static void updateListingPropertyType(int listingId) throws SQLException {
+   		Statement stmt = conn.createStatement();
+   		
+   		int typeId = getType();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET TYPEID = " + typeId + " \n" +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+	
+	private static void updateListingAddress(int listingId) throws SQLException {
+		
+		int addressId = getAddress();
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING \n" +
+   						" SET ADDRESSID = " + addressId + " \n" +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+	
+	private static void updateListingStatus(int listingId) throws SQLException {
+		
+		int statusId = getStatus();
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = 	" update LISTING " +
+   						" SET StatusId = " + statusId +
+   						" WHERE ListingId = " + listingId;
+   		
+   		stmt.execute(qry);
+   		
+   		printUpdateVerification();
+	}
+
+	/**
+	 * 
+	 * @return
+	 * @throws SQLException
+	 */
+	private static ArrayList<String> getListing() throws SQLException {
+		
+		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = "Select * from LISTING";
+   		
+   		// execute the query
+   		ResultSet rs = stmt.executeQuery(qry);
+	   	   
+   		// store the keys into the database
+   		HashMap<Integer, ArrayList<String>> listings = new HashMap<Integer,ArrayList<String>>();
+   		
+   		// display the companies to the user
+   		System.out.print("ADDRESSES\n-------------------");
+   		int i = 0;
+   		while (rs.next()) {
+   			ArrayList<String> temp = new ArrayList<String>();
+   			String tempString = null;
+   			System.out.print("\n" + (i++ + 1) + ")");
+   			
+   			tempString = rs.getString("ListingDescription");
+   			System.out.print("\n\t" + "Description: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = rs.getString("ListUrl");
+   			System.out.print("\n\t" + "URL: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = rs.getString("ListPrice");
+   			System.out.print("\n\t" + "Price: " + tempString);
+   			temp.add(tempString);
+   			
+   			System.out.print("\n\t" + "Date Listed: "  + tempString);
+   			
+   			tempString = Integer.toString(rs.getInt("Bedrooms"));
+   			System.out.print("\n\t" + "Bedrooms: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = Integer.toString(rs.getInt("Bathrooms"));
+   			System.out.print("\n\t" + "Bathrooms: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = getMlsInfo(rs.getInt("MLSID"));
+   			System.out.print("\n\t" + "MLS Company: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = getCategoryName(rs.getInt("CATEGORYID"));
+   			System.out.print("\n\t" + "Category: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = getTypeName(rs.getInt("TypeId"));
+   			System.out.print("\n\t" + "Property Type: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = getAddressName(rs.getInt("AddressId"));
+   			System.out.print("\n\t" + "Address: " + tempString);
+   			temp.add(tempString);
+   			
+   			tempString = getStatusInfo(rs.getInt("STATUSID"));
+   			System.out.print("\n\t" + "Status: " + tempString);
+   			temp.add(tempString);
+   			
+   			temp.add(Integer.toString(rs.getInt("LISTINGID")));
+   			
+   			listings.put(rs.getInt("ListingId"), temp);
+   		}
+	   
+   		// loop until the user selects a valid option
+   		int choice = 0;
+   		boolean valid = false;
+   		while (!valid) {
+	   		try {
+	   	   		System.out.print("\n\nPlease choose a listing to update: ");
+	   			choice = Integer.parseInt(scanner.nextLine());
+	   			
+	   			if(choice <= 0 || choice > (listings.size())) {
+	   				throw new NumberFormatException();
+	   			}
+	   			valid = true;
+	   		} catch(NumberFormatException nfe) {
+	   			System.out.println("Your selection was invalid, please try again");
+	   		}
+   		}
+   		
+   		// return the primary key of the MLS company
+   		return listings.get(choice);
+	}
+	
+	private static String getCategoryName(int categoryId) throws SQLException {
+		
+		String categoryName = null;
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = "Select categoryName from CATEGORY where CATEGORYID = " + categoryId;
+   		
+   		// execute the query
+   		ResultSet rs = stmt.executeQuery(qry);
+   		
+   		while (rs.next()) {
+   			categoryName = rs.getString("categoryName");
+   		}
+   		
+		return categoryName;
+	}
+	
+	private static String getMlsInfo(int mlsId) throws SQLException {
+		
+		String mlsInfo = null;
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = "Select MLSNAME from MLS where MLSID = " + mlsId;
+   		
+   		// execute the query
+   		ResultSet rs = stmt.executeQuery(qry);
+   		
+   		while (rs.next()) {
+   			mlsInfo = rs.getString("MLSNAME");
+   		}
+   		
+		return mlsInfo;
+	}
+	
+	private static String getStatusInfo(int statusId) throws SQLException {
+		
+		String listingStatus = null;
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = "Select LISTINGSTATUS from STATUS where StatusId = " + statusId;
+   		
+   		// execute the query
+   		ResultSet rs = stmt.executeQuery(qry);
+   		
+   		while (rs.next()) {
+   			listingStatus = 	rs.getString("LISTINGSTATUS");
+   		}
+   		
+		return listingStatus;
+	}
+	
+	private static String getAddressName(int addressId) throws SQLException {
+		
+		String addressName = null;
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = "Select * from ADDRESS where AddressId = " + addressId;
+   		
+   		// execute the query
+   		ResultSet rs = stmt.executeQuery(qry);
+   		
+   		while (rs.next()) {
+   			addressName = 	rs.getString("FULLSTREETADDRESS") + "\n\t\t " +
+   							rs.getString("CITY") + "\n\t\t " +
+   							rs.getString("STATEORPROVINCE") + "\n\t\t " +
+   							rs.getString("POSTALCODE") + "\n\t\t " +
+   							rs.getString("COUNTRY"); 
+   		}
+   		
+		return addressName;
+	}
+	
+	private static String getTypeName(int typeId) throws SQLException {
+		
+		String typeName = null;
+		
+   		Statement stmt = conn.createStatement();
+   		
+   		// generate the query string
+   		String qry = "Select PROPERTYTYPE from TYPE where typeId = " + typeId;
+   		
+   		// execute the query
+   		ResultSet rs = stmt.executeQuery(qry);
+   		
+   		while (rs.next()) {
+   			typeName =rs.getString("PROPERTYTYPE"); 
+   		}
+   		
+		return typeName;
 	}
 	
 	/**
 	 * 
 	 */
-	void insertMls() throws SQLException{
+	private void insertMls() throws SQLException{
 		//MlsId, MlsName, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
 		
 		boolean done = false;
@@ -1028,8 +1432,12 @@ public class AdminUser extends User {
 	     	boolean inserted = stmt.execute(qry);
 	}
 	
-	void updateStatus() throws SQLException {
+	private static void updateStatus() throws SQLException {
 		//StatusId, ListingStatus
 
+	}
+	
+	private static void printUpdateVerification() {
+		System.out.println("You have successfully updated this field.");
 	}
 }
