@@ -31,19 +31,12 @@ CREATE TABLE MLS (
     MlsFax VARCHAR(50)
 );
 
-CREATE TABLE PHOTO (
-    PhotoId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
-    MediaModificationTimestamp DATE NOT NULL,
-    MediaURL VARCHAR(100) NOT NULL,
-    ListingId int not null references LISTING on delete set null
-);
-
 create table LISTING (
     ListingId int NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
     ListURL varchar(100) NOT NULL,
     ListingDescription varchar(100),
     ListingDate DATE NOT NULL,
-	ListPrice int NOT NULL,
+	 ListPrice int NOT NULL,
     Bedrooms int,
     Bathrooms int,
     TypeId int references TYPE on delete set null,
@@ -52,3 +45,12 @@ create table LISTING (
     MlsId int references MLS on delete set null,
     AddressId int references ADDRESS on delete set null
 );
+
+CREATE TABLE PHOTO (
+    PhotoId INT NOT NULL PRIMARY KEY GENERATED ALWAYS AS IDENTITY(START WITH 1, INCREMENT BY 1),
+    MediaModificationTimestamp DATE NOT NULL,
+    MediaURL VARCHAR(100) NOT NULL,
+    ListingId int not null references LISTING on delete set null
+);
+
+

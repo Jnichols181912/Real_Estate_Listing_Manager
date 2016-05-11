@@ -561,7 +561,7 @@ public class AdminUser extends User {
 					bedrooms = Integer.parseInt(scanner.nextLine());
 					valid = true;
 				} catch (NumberFormatException nfe) {
-					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
+					System.out.println("You've entered an invalid number of bedrooms. please enter an integer representation");
 				}
 			}
 			
@@ -572,7 +572,7 @@ public class AdminUser extends User {
 					bathrooms = Integer.parseInt(scanner.nextLine());
 					valid = true;
 				} catch (NumberFormatException nfe) {
-					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
+					System.out.println("You've entered an invalid number of bathrooms. please enter an integer representation");
 				}
 			}
 			
@@ -595,28 +595,150 @@ public class AdminUser extends User {
 							   "\nAddress Id:\t" + address);
 			System.out.print("Is this the correct information(y or n): ");
 			choice = scanner.nextLine();
-			if (Character.toLowerCase(choice.trim().charAt(0)) == 'q') stop = true;
+			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') stop = true;
 		}
 		
 		Timestamp date = new java.sql.Timestamp(new java.util.Date().getTime());
 
 		Statement stmt = conn.createStatement();
 		
-     	String qry = "insert into ADDRESS(ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, TypeId, StatusId, CategoryId, MlsId, AddressId) "
-     				 + "values (" + price + ", '" + url + "', '" + description + "', '" + date + "', "+ bedrooms + ", " + bathrooms + ", " + type + ", " + status + ", "
-     				 + category + ", " + mls + ", " + ", " + address + ")";
+     	String qry = "insert into LISTING(ListPrice, ListURL, ListingDescription, ListingDate, Bedrooms, Bathrooms, TypeId, StatusId, CategoryId, MlsId, AddressId) "
+     				 + "values(" + price + ", '" + url + "', '" + description + "', '" + date + "', " + bedrooms + ", " + bathrooms + ", " + type + ", " + status + ", "
+     				 + category + ", " + mls + ", " + address + ")";
+     
+     	boolean success = stmt.execute(qry);
      	
-     	ResultSet rs = stmt.executeQuery(qry);
-     	
-     	rs.close();
-	}
-
-	 public static int getType() throws SQLException {return 0;}
-	 public static int getStatus() throws SQLException{return 0;}
-	 public static int getCategory() throws SQLException{return 0;}
-	 public static int getMls() throws SQLException {return 0;}
+     	if (success) {
+     		System.out.println("successfully inserted a listing");
+     	} else {
+     		System.out.println("inserting a listing was unsuccessful");
+     	}
+   	}
+	
+	 public static int getType() throws SQLException {
+	   		Statement stmt = conn.createStatement();
+	   		
+	   		// generate the query string
+	   		String qry = "Select * from TYPE";
+	   		
+	   		// execute the query
+	   		ResultSet rs = stmt.executeQuery(qry);
+		   	   
+	   		// store the keys into the database
+	   		ArrayList<Integer> MlsId = new ArrayList<Integer>();
+	   		
+	   		// display the companies to the user
+	   		System.out.print("Property Type\n------------------");
+	   		int i = 0;
+	   		while (rs.next()) {
+	   			MlsId.add(rs.getInt("Typeid"));
+	   			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("propertytype"));
+	   		}
+		   
+	   		// loop until the user selects a valid option
+	   		int choice = 0;
+	   		boolean valid = false;
+	   		while (!valid) {
+		   		try {
+		   	   		System.out.print("\n\nPlease choose a property type: ");
+		   			choice = Integer.parseInt(scanner.nextLine());
+		   			
+		   			if(choice <= 0 || choice > (MlsId.size())) {
+		   				throw new NumberFormatException();
+		   			}
+		   			valid = true;
+		   		} catch(NumberFormatException nfe) {
+		   			System.out.println("Your selection was invalid, please try again");
+		   		}
+	   		}
+	   		
+	   		// return the primary key of the MLS company
+	   		return MlsId.get(choice - 1);
+	 }
 	 
-	 public static int getAddress(){
+	 public static int getStatus() throws SQLException {
+	   		Statement stmt = conn.createStatement();
+	   		
+	   		// generate the query string
+	   		String qry = "Select * from STATUS";
+	   		
+	   		// execute the query
+	   		ResultSet rs = stmt.executeQuery(qry);
+		   	   
+	   		// store the keys into the database
+	   		ArrayList<Integer> status = new ArrayList<Integer>();
+	   		
+	   		// display the statuses to the user
+	   		System.out.print("Status\n------------------");
+	   		int i = 0;
+	   		while (rs.next()) {
+	   			status.add(rs.getInt("StatusId"));
+	   			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("listingstatus"));
+	   		}
+		   
+	   		// loop until the user selects a valid option
+	   		int choice = 0;
+	   		boolean valid = false;
+	   		while (!valid) {
+		   		try {
+		   	   		System.out.print("\n\nPlease choose a Status: ");
+		   			choice = Integer.parseInt(scanner.nextLine());
+		   			
+		   			if(choice <= 0 || choice > (status.size())) {
+		   				throw new NumberFormatException();
+		   			}
+		   			valid = true;
+		   		} catch(NumberFormatException nfe) {
+		   			System.out.println("Your selection was invalid, please try again");
+		   		}
+	   		}
+	   		
+	   		// return the primary key of the status
+	   		return status.get(choice - 1);
+	 }
+	 
+	 public static int getCategory() throws SQLException {
+	   		Statement stmt = conn.createStatement();
+	   		
+	   		// generate the query string
+	   		String qry = "Select * from CATEGORY";
+	   		
+	   		// execute the query
+	   		ResultSet rs = stmt.executeQuery(qry);
+		   	   
+	   		// store the keys into the database
+	   		ArrayList<Integer> category = new ArrayList<Integer>();
+	   		
+	   		// display the companies to the user
+	   		System.out.print("CATEGORIES\n------------------");
+	   		int i = 0;
+	   		while (rs.next()) {
+	   			category.add(rs.getInt("CATEGORYID"));
+	   			System.out.print("\n" + (i++ + 1) + ") " + rs.getString("CATEGORYNAME"));
+	   		}
+		   
+	   		// loop until the user selects a valid option
+	   		int choice = 0;
+	   		boolean valid = false;
+	   		while (!valid) {
+		   		try {
+		   	   		System.out.print("\n\nPlease choose a category: ");
+		   			choice = Integer.parseInt(scanner.nextLine());
+		   			
+		   			if(choice <= 0 || choice > (category.size())) {
+		   				throw new NumberFormatException();
+		   			}
+		   			valid = true;
+		   		} catch(NumberFormatException nfe) {
+		   			System.out.println("Your selection was invalid, please try again");
+		   		}
+	   		}
+	   		
+	   		// return the primary key of the category
+	   		return category.get(choice - 1);
+	 }
+	 
+	 public static int getMls() throws SQLException {
 	   		Statement stmt = conn.createStatement();
 	   		
 	   		// generate the query string
@@ -656,6 +778,52 @@ public class AdminUser extends User {
 	   		// return the primary key of the MLS company
 	   		return MlsId.get(choice - 1);
 	 }
+	 
+	 public static int getAddress() throws SQLException {
+	   		Statement stmt = conn.createStatement();
+	   		
+	   		// generate the query string
+	   		String qry = "Select * from ADDRESS";
+	   		
+	   		// execute the query
+	   		ResultSet rs = stmt.executeQuery(qry);
+		   	   
+	   		// store the keys into the database
+	   		ArrayList<Integer> MlsId = new ArrayList<Integer>();
+	   		
+	   		// display the companies to the user
+	   		System.out.print("ADDRESSES\n-------------------");
+	   		int i = 0;
+	   		while (rs.next()) {
+	   			MlsId.add(rs.getInt("AddressId"));
+	   			System.out.print("\nCity: " + (i + 1) + ") " + rs.getString("City"));
+	   			System.out.print("\nState/Province: " + (i + 1) + ") " + rs.getString("StateOrProvince"));
+	   			System.out.print("\nPostalCode: " + (i + 1) + ") " + rs.getInt("PostalCode"));
+	   			System.out.print("\nCountry: " + (i + 1) + ") " + rs.getString("Country"));
+	   			System.out.print("\nFull Street Address" + (i++ + 1) + ") " + rs.getString("FullStreetAddress"));
+	   		}
+		   
+	   		// loop until the user selects a valid option
+	   		int choice = 0;
+	   		boolean valid = false;
+	   		while (!valid) {
+		   		try {
+		   	   		System.out.print("\n\nPlease choose a MLS Company: ");
+		   			choice = Integer.parseInt(scanner.nextLine());
+		   			
+		   			if(choice <= 0 || choice > (MlsId.size())) {
+		   				throw new NumberFormatException();
+		   			}
+		   			valid = true;
+		   		} catch(NumberFormatException nfe) {
+		   			System.out.println("Your selection was invalid, please try again");
+		   		}
+	   		}
+	   		
+	   		// return the primary key of the MLS company
+	   		return MlsId.get(choice - 1);
+	 }
+	
 	
 	
 	/**
