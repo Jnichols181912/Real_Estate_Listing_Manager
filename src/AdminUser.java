@@ -30,12 +30,13 @@ public class AdminUser extends User {
 			System.out.println("Choose from one of the following options:"
 	                           + "\n\t1:  insert record"
 	                           + "\n\t2:  update record"
-	                           + "\n\t3:  regular user mode");
+	                           + "\n\t3:  regular user mode"
+							   + "\n\t4:  quit");
 			System.out.print("Your choice ==> ");
 
 			try {
 				choice = Integer.parseInt(scanner.nextLine());
-				if (choice < 1 || choice > 3) throw new NumberFormatException();
+				if (choice < 1 || choice > 4) throw new NumberFormatException();
 				validChoice = true;
 			} catch (NumberFormatException nfe) {
 				clearConsole();
@@ -58,6 +59,8 @@ public class AdminUser extends User {
 	  		case 3: RegularUser reg = new RegularUser();
 	  				reg.printMenuAndExecute();
 	  				break;
+	  				
+	  		case 4: return;
 	  					
 	  		default: System.out.println("Error handling ensures that code will never reach here... if somehow this line gets printed our program has some major issues");
 	             	break;
@@ -100,6 +103,11 @@ public class AdminUser extends User {
 				System.out.println("Your input needs to be an integer in range [1,7]");
 			}
 		}
+		
+		clearConsole();
+		printHeader(adminMode);
+		printHeader(insertRecord);
+		
 		
 		switch (choice) {
 		
@@ -159,39 +167,37 @@ public class AdminUser extends User {
 				validChoice = true;
 			} catch (NumberFormatException nfe) {
 				clearConsole();
-				System.out.println("Your input needs to be an integer in range [1,7]");
+				printHeader(adminMode);
+				System.out.println("\nYour input needs to be an integer in range [1,7]");
 			}
 		}
 		
+		clearConsole();
+		printHeader(adminMode);
+		printHeader(updateRecord);
+		
 		switch (choice) {
 		
-			case 1:  	showAllAddresses();
-						updateAddress();
+			case 1:  	updateAddress();
 		 				break;
 			
-			case 2:  	//showAllListings();
-						updateListing();
+			case 2:  	updateListing();
 						break;
 		 
-			case 3:  	showAllCompanies();
-						updateMls();
+			case 3:  	updateMls();
 						break;
   	 
-			case 4:  	showAllPhotos();
-						updatePhoto();
-							break;
+			case 4:		updatePhoto();
+						break;
 			
-			case 5: 	showAllCategories();
-						updateCategory();
-							break;
+			case 5:		updateCategory();
+						break;
 			
-			case 6: 	showAllStatuses();
-						updateStatus();
-							break;
+			case 6: 	updateStatus();
+						break;
 			
-			case 7:		showAllTypes();
-						updateType();
-							break;
+			case 7:		updateType();
+						break;
 	  					
 	  		default: System.out.println("Error handling ensures that code will never reach here... if somehow this line gets printed our program has some major issues");
 	             	break;
@@ -351,7 +357,7 @@ public class AdminUser extends User {
 
 		// Loop through the result set
      	// TypeId, PropertyType
-     	System.out.println("Timestamp\t\tURL");
+     	System.out.println("Type Id\t\tProperty Type");
      	printLine();
      	
 		while (rs.next()) {
@@ -449,7 +455,7 @@ public class AdminUser extends User {
      	
      	stmt.execute(qry);
      
-     	System.out.println("The address has been inserted");
+     	System.out.println("\nThe address has been inserted\n");
 	}
 	
 	/**
@@ -459,7 +465,6 @@ public class AdminUser extends User {
 	void updateAddress() throws SQLException {
 		//FullStreetAddress, City, StateOrProvince, PostalCode, Country
 		
-		printHeader(updateRecord);
 		ArrayList<String> addressInfo = getAddresses();
 		
 		int i = 0;
@@ -482,13 +487,12 @@ public class AdminUser extends User {
 		int updateOption = 0;
 		while (!done) {
 			while (!correct) {
-				System.out.println("\n\nPlease insert the field you want to update");
+				System.out.println("\n\nPlease insert the field you want to update: (1-5)");
 				try {
 					updateOption = Integer.parseInt(scanner.nextLine());
 					if (updateOption < 1 || updateOption > 5) throw new NumberFormatException();
 					correct = true;
 				} catch (NumberFormatException nfe) {
-					clearConsole();
 					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
 				}
 			}
@@ -509,7 +513,7 @@ public class AdminUser extends User {
 			String choiceString = null;
 			
 			while(choiceString == null || choiceString.trim().isEmpty()) {
-				System.out.println("Would you like to continue updating the same address? (y/n)");
+				System.out.println("\n\nWould you like to continue updating the same address? (y/n) :");
 				choiceString = scanner.nextLine();
 				if (!choiceString.trim().isEmpty()) { 
 					if (Character.toLowerCase(choiceString.trim().charAt(0)) == 'n') {
@@ -767,7 +771,7 @@ public class AdminUser extends User {
 							   "\nType Id:\t" + type + 
 							   "\nStatus Id:\t" + status + 
 							   "\nCategory Id:\t" + category +
-							   "\nMLS Id:\t" + mls + 
+							   "\nMLS Id:\t\t" + mls + 
 							   "\nAddress Id:\t" + address);
 			System.out.print("Is this the correct information(y or n): ");
 			choice = scanner.nextLine();
@@ -784,11 +788,8 @@ public class AdminUser extends User {
      
      	boolean success = stmt.execute(qry);
      	
-     	if (success) {
-     		System.out.println("successfully inserted a listing");
-     	} else {
-     		System.out.println("inserting a listing was unsuccessful");
-     	}
+     	System.out.println("\nsuccessfully inserted a listing.\n");
+
    	}
 	
 	 public static int getType() throws SQLException {
@@ -1060,7 +1061,6 @@ public class AdminUser extends User {
 	 */
 	void updateListing() throws SQLException {
 		
-		printHeader(updateRecord);
 		ArrayList<String> listingInfo = getListing();
 		
 		int i = 0;
@@ -1094,7 +1094,6 @@ public class AdminUser extends User {
 					if (updateOption < 1 || updateOption > 11) throw new NumberFormatException();
 					correct = true;
 				} catch (NumberFormatException nfe) {
-					clearConsole();
 					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
 				}
 			}
@@ -1558,11 +1557,11 @@ public class AdminUser extends User {
 			fax = scanner.nextLine();
 			
 			printLine();
-			System.out.println("Name:" + name +
-							   "\tAddress: " + address + 
-							   "\tState: " + email +
-							   "\tCountry: " + phone +
-							   "\tPostal Code: " + fax);
+			System.out.println("\nName:\t" + name +
+							   "\nAddress:\t" + address + 
+							   "\nState:\t" + email +
+							   "\nCountry\t: " + phone +
+							   "\nPostal Code\t: " + fax);
 			System.out.print("Is this the correct information(y or n): ");
 			choice = scanner.nextLine();
 			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
@@ -1570,24 +1569,20 @@ public class AdminUser extends User {
 			}
 		}
 			
-			Statement stmt = conn.createStatement();
-	     	String qry = "insert into MLS(MlsName, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax) "
-	     				 + "values ('" + name + "', '" + address + "', '" + email + "', '" + phone + "', '"
-	     				 + fax +"')";
-	     	
-	     	boolean inserted = stmt.execute(qry);
-	     	
-	     	if (inserted == true) {
-	     		System.out.println("Successfully added.\n\n");
-	     	}
-	    
+		Statement stmt = conn.createStatement();
+     	String qry = "insert into MLS(MlsName, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax) "
+     				 + "values ('" + name + "', '" + address + "', '" + email + "', '" + phone + "', '"
+     				 + fax +"')";
+     	
+     	boolean inserted = stmt.execute(qry);
+     	
+
+ 		System.out.println("Successfully added a new MLS Company.\n\n");	    
 
 	}
 	
 	void updateMls() throws SQLException {
 		//MlsName, MlsAgent, MlsAddress, MlsEmail, MlsPhoneNumber, MlsFax
-		
-		printHeader(updateRecord);
 		ArrayList<String> mlsInfo = getMlsCompanies();
 		
 		int i = 0;
@@ -1616,7 +1611,6 @@ public class AdminUser extends User {
 					if (updateOption < 1 || updateOption > 5) throw new NumberFormatException();
 					correct = true;
 				} catch (NumberFormatException nfe) {
-					clearConsole();
 					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
 				}
 			}
@@ -1842,23 +1836,25 @@ public class AdminUser extends User {
 			URL = scanner.nextLine();
 
 			System.out.print("Please enter the listing id: ");
-			boolean valid = false;
-			while (!valid) {
-				try {
-					listingId = Integer.parseInt(scanner.nextLine());
-					valid = true;
-				} catch (NumberFormatException nfe) {
-					System.out.println("You've entered an incorrect postal code format. Please enter the digits corresponding to the postal code");
-				}
-			}
+			listingId = getListingId();
 			
-			printLine();
-			System.out.println("URL:" + URL +
-							   "\tListing Id: " + listingId);
-			System.out.print("Is this the correct information(y or n): ");
-			choice = scanner.nextLine();
-			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
-				done = true;
+			boolean correct = false;
+			while (!correct) {
+				printLine();
+				System.out.println("URL:\t" + URL +
+								   "\nListing Id:\t" + listingId);
+				System.out.print("\nIs this the correct information(y or n): ");
+				choice = scanner.nextLine();
+				if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+					done = true;
+					correct = true;
+				} else if (Character.toLowerCase(choice.trim().charAt(0)) == 'n') {
+					done = false;
+					correct = false;
+				} else {
+					System.out.println("please enter yes or no to indicate that you are satisfied with your input.");
+					correct = false;
+				}
 			}
 		}
 			
@@ -1867,11 +1863,12 @@ public class AdminUser extends User {
 	     				 + "values ('" + timestamp + "', '" + URL + "', " + listingId +")";
 	     	
 	     	boolean inserted = stmt.execute(qry);
+	     	
+	     	System.out.println("Successfully added a photo.");
 	}
 	
 	void updatePhoto() throws SQLException {
 		//MediaModificationTimestamp, MediaUrl, ListingId
-		printHeader(updateRecord);
 		ArrayList<String> photoInfo = getPhotos();
 		
 		int i = 0;
@@ -1898,7 +1895,6 @@ public class AdminUser extends User {
 					if (updateOption < 1 || updateOption > 2) throw new NumberFormatException();
 					correct = true;
 				} catch (NumberFormatException nfe) {
-					clearConsole();
 					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
 				}
 			}
@@ -1985,7 +1981,7 @@ public class AdminUser extends User {
 	   				throw new NumberFormatException();
 	   			}
 	   			valid = true;
-	   		} catch(NumberFormatException nfe) {
+	   		} catch (NumberFormatException nfe) {
 	   			System.out.println("Your selection was invalid, please try again");
 	   		}
    		}
@@ -2046,11 +2042,21 @@ public class AdminUser extends User {
 			category = scanner.nextLine();
 			
 			printLine();
-			System.out.println("Category:" + category);
-			System.out.print("Is this the correct information(y or n): ");
-			choice = scanner.nextLine();
-			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
-				done = true;
+			boolean correct = false;
+			while (!correct) {
+				System.out.println("\nCategory:\t " + category);
+				System.out.print("\nIs this the correct information (y or n): ");
+				choice = scanner.nextLine();
+				if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+					done = true;
+					correct = true;
+				} else if (Character.toLowerCase(choice.trim().charAt(0)) == 'n') {
+					done = false;
+					correct = false;
+				} else {
+					System.out.println("please enter yes or no to indicate that you are satisfied with your input.");
+					correct = false;
+				}
 			}
 		}
 			
@@ -2064,7 +2070,6 @@ public class AdminUser extends User {
 	void updateCategory() throws SQLException {
 		//CategoryId, CategoryName
 		
-		printHeader(updateRecord);
 		ArrayList<String> categoryInfo = getCategories();
 		
 		int i = 0;
@@ -2089,7 +2094,6 @@ public class AdminUser extends User {
 					if (updateOption < 1 || updateOption > 1) throw new NumberFormatException();
 					correct = true;
 				} catch (NumberFormatException nfe) {
-					clearConsole();
 					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
 				}
 			}
@@ -2219,12 +2223,11 @@ public class AdminUser extends User {
 	     	String qry = "insert into TYPE(PropertyType) "
 	     				 + "values ('" + type + "')";
 	     	
-	     	boolean inserted = stmt.execute(qry);
+	     	stmt.execute(qry);
 	}
 	
 	void updateType() throws SQLException {
 		//TypeId, PropertyType
-		printHeader(updateRecord);
 		ArrayList<String> typeInfo = getTypes();
 		
 		int i = 0;
@@ -2249,7 +2252,6 @@ public class AdminUser extends User {
 					if (updateOption < 1 || updateOption > 1) throw new NumberFormatException();
 					correct = true;
 				} catch (NumberFormatException nfe) {
-					clearConsole();
 					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
 				}
 			}
@@ -2367,11 +2369,21 @@ public class AdminUser extends User {
 			status = scanner.nextLine();
 			
 			printLine();
-			System.out.println("Status:" + status);
-			System.out.print("Is this the correct information(y or n): ");
-			choice = scanner.nextLine();
-			if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
-				done = true;
+			boolean correct = false;
+			while (!correct) {
+				System.out.println("Status:\n" + status);
+				System.out.print("\nIs this the correct information(y or n): ");
+				choice = scanner.nextLine();
+				if (Character.toLowerCase(choice.trim().charAt(0)) == 'y') {
+					done = true;
+					correct = true;
+				} else if (Character.toLowerCase(choice.trim().charAt(0)) == 'n') {
+					done = false;
+					correct = false;
+				} else {
+					System.out.println("please enter yes or no to indicate that you are satisfied with your input.");
+					correct = false;
+				}
 			}
 		}
 			
@@ -2384,7 +2396,6 @@ public class AdminUser extends User {
 	
 	private static void updateStatus() throws SQLException {
 		//StatusId, ListingStatus
-		printHeader(updateRecord);
 		ArrayList<String> statusInfo = getStatuses();
 		
 		int i = 0;
@@ -2409,7 +2420,6 @@ public class AdminUser extends User {
 					if (updateOption < 1 || updateOption > 1) throw new NumberFormatException();
 					correct = true;
 				} catch (NumberFormatException nfe) {
-					clearConsole();
 					System.out.println("\n\nYou have entered an invalid option. Please choose the digit corresponding to your desired option\n");
 				}
 			}
